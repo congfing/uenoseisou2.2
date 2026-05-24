@@ -48,19 +48,35 @@ body {
 }
 #tool-panel.collapsed #toolbar-toggle { border-top: none; padding: 4px 0; }
 
-/* ===== GITHUB DROPDOWN ===== */
-#gh-dropdown {
-  display: none; position: fixed; border: 1px solid; border-radius: 8px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.2); z-index: 1000; min-width: 270px; overflow: hidden;
+/* ===== GITHUB MODAL ===== */
+#gh-modal {
+  display: none; position: fixed; inset: 0; z-index: 3000;
+  background: rgba(0,0,0,0.45); align-items: center; justify-content: center;
 }
-#gh-dropdown.open { display: block; }
-#gh-dropdown-title { font-size: 11px; font-weight: 700; padding: 8px 12px 6px; border-bottom: 1px solid; }
+#gh-modal.open { display: flex; }
+#gh-modal-box {
+  border: 1px solid; border-radius: 12px; padding: 16px 18px;
+  max-width: 440px; width: 92%; box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+  display: flex; flex-direction: column; max-height: 75vh;
+}
+#gh-modal-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+#gh-search {
+  width: 100%; padding: 8px 10px; border: 1px solid; border-radius: 8px;
+  font: inherit; font-size: 13px; margin-bottom: 8px; outline: none; background: transparent;
+}
+#gh-file-list {
+  overflow-y: auto; flex: 1; border: 1px solid; border-radius: 8px; min-height: 60px;
+}
 .gh-file-item {
   display: block; width: 100%; text-align: left; padding: 9px 14px; font-size: 12px;
   font-family: inherit; background: none; border: none; border-bottom: 1px solid;
   cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .gh-file-item:last-child { border-bottom: none; }
+.gh-file-item:hover { opacity: 0.75; }
+.gh-status { padding: 12px 14px; font-size: 12px; opacity: 0.6; }
+#gh-modal-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+#gh-modal-footer button { padding: 6px 16px; border: 1px solid; border-radius: 7px; font: inherit; font-size: 12px; cursor: pointer; }
 
 /* ===== PATH BAR ===== */
 #path-bar {
@@ -199,7 +215,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
   <div id="tool-panel-inner">
     <button class="tool-btn" onclick="document.getElementById('file-input').click()">📂 開く</button>
     <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none">
-    <button class="tool-btn" id="gh-btn" onclick="toggleGhDropdown()">☁️ GitHub ▾</button>
+    <button class="tool-btn" id="gh-btn" onclick="openGhModal()">☁️ GitHub</button>
     <span class="tool-sep">|</span>
     <button class="tool-btn active" id="btn-list" onclick="setView('list')">≡ リスト</button>
     <button class="tool-btn"        id="btn-grid" onclick="setView('grid')">⊞ グリッド</button>
@@ -219,8 +235,13 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
   <button id="toolbar-toggle" onclick="toggleToolPanel()">▲ 閉じる</button>
 </div>
 
-<div id="gh-dropdown">
-  <div id="gh-dropdown-title">☁️ ファイルを選択</div>
+<div id="gh-modal">
+  <div id="gh-modal-box">
+    <div id="gh-modal-title">☁️ GitHubからExcelを開く</div>
+    <input type="search" id="gh-search" placeholder="ファイル名で検索…" oninput="renderGhFiles(this.value)">
+    <div id="gh-file-list"><div class="gh-status">読み込み中…</div></div>
+    <div id="gh-modal-footer"><button onclick="closeGhModal()">キャンセル</button></div>
+  </div>
 </div>
 
 <div id="path-bar"></div>
@@ -279,41 +300,60 @@ const _cellEls  = new Map();   // "r:c" → el 描画済み全セル
 const _alignments = new Map(); // "sheet:r:c" → 'left'|'center'|'right'
 
 // ===== GitHub dropdown =====
-(function() {
-  const dd = document.getElementById('gh-dropdown');
-  if (!GITHUB_FILES.length) { document.getElementById('gh-btn').style.display = 'none'; return; }
-  GITHUB_FILES.forEach((f, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'gh-file-item'; btn.textContent = f.name;
-    btn.onclick = () => { closeGhDropdown(); loadFromGitHub(f, i); };
-    dd.appendChild(btn);
-  });
-})();
-
 // ===== ツールパネル =====
 function toggleToolPanel() {
   const p = document.getElementById('tool-panel'), b = document.getElementById('toolbar-toggle');
   const c = p.classList.toggle('collapsed');
   b.textContent = c ? '▼ ツール' : '▲ 閉じる';
-  if (c) closeGhDropdown();
 }
 function closeToolPanel() {
   document.getElementById('tool-panel').classList.add('collapsed');
   document.getElementById('toolbar-toggle').textContent = '▼ ツール';
-  closeGhDropdown();
 }
 
-// ===== GitHub =====
-function toggleGhDropdown() {
-  const dd = document.getElementById('gh-dropdown');
-  if (dd.classList.contains('open')) { closeGhDropdown(); return; }
-  const r = document.getElementById('gh-btn').getBoundingClientRect();
-  dd.style.top = (r.bottom + 4) + 'px'; dd.style.left = r.left + 'px';
-  dd.classList.add('open');
+// ===== GitHub モーダル =====
+const GH_API = 'https://api.github.com/repos/congfing/uenoseisou2.2/contents/';
+let _ghFiles = [];
+
+async function openGhModal() {
+  document.getElementById('gh-modal').classList.add('open');
+  document.getElementById('gh-search').value = '';
+  _ghFiles = [...GITHUB_FILES];
+  renderGhFiles('');
+  try {
+    const res = await fetch(GH_API);
+    if (res.ok) {
+      const items = await res.json();
+      const found = items
+        .filter(f => f.type === 'file' && /\.(xlsx|xls)$/i.test(f.name))
+        .map(f => ({ name: f.name, url: GH_BASE + encodeURIComponent(f.name) }));
+      const existing = new Set(_ghFiles.map(f => f.name));
+      found.forEach(f => { if (!existing.has(f.name)) _ghFiles.push(f); });
+      renderGhFiles(document.getElementById('gh-search').value);
+    }
+  } catch(e) {}
 }
-function closeGhDropdown() { document.getElementById('gh-dropdown').classList.remove('open'); }
-document.addEventListener('click', e => {
-  if (!e.target.closest('#gh-btn') && !e.target.closest('#gh-dropdown')) closeGhDropdown();
+
+function renderGhFiles(query) {
+  const list = document.getElementById('gh-file-list');
+  const q = query.trim().toLowerCase();
+  const filtered = q ? _ghFiles.filter(f => f.name.toLowerCase().includes(q)) : _ghFiles;
+  if (!filtered.length) {
+    list.innerHTML = '<div class="gh-status">ファイルが見つかりません</div>';
+    return;
+  }
+  list.innerHTML = '';
+  filtered.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'gh-file-item'; btn.textContent = f.name;
+    btn.onclick = () => { closeGhModal(); loadFromGitHub(f, 0); };
+    list.appendChild(btn);
+  });
+}
+
+function closeGhModal() { document.getElementById('gh-modal').classList.remove('open'); }
+document.getElementById('gh-modal').addEventListener('click', e => {
+  if (e.target.id === 'gh-modal') closeGhModal();
 });
 async function loadFromGitHub(file, idx) {
   const btn = document.getElementById('gh-btn'); btn.disabled = true;
