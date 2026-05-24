@@ -206,6 +206,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
     <span class="tool-sep">|</span>
     <button class="tool-btn" id="edit-btn" onclick="toggleEdit()">✏️ 編集</button>
     <span class="tool-sep">|</span>
+    <button class="tool-btn" id="select-all-btn" onclick="selectAll()" disabled title="全セル選択">⬛ 全選択</button>
     <button class="tool-btn" id="align-l-btn" onclick="applyAlign('left')"   title="左寄せ">≡L</button>
     <button class="tool-btn" id="align-c-btn" onclick="applyAlign('center')" title="中央">≡C</button>
     <button class="tool-btn" id="align-r-btn" onclick="applyAlign('right')"  title="右寄せ">≡R</button>
@@ -269,8 +270,11 @@ let _currentSheet = null;
 let _filename     = '';
 let _viewMode     = 'list';
 let _editMode     = false;
-let _selectedCell = null;          // { r, c, el }
-const _alignments = new Map();     // key "sheet:r:c" → 'left'|'center'|'right'
+let _selRange   = null;        // { r1,c1,r2,c2 } 選択範囲
+let _isDragging = false;
+const _selEls   = new Map();   // "r:c" → el 選択中の要素
+const _cellEls  = new Map();   // "r:c" → el 描画済み全セル
+const _alignments = new Map(); // "sheet:r:c" → 'left'|'center'|'right'
 
 // ===== GitHub dropdown =====
 (function() {
@@ -350,6 +354,7 @@ function loadWorkbook(buf) {
   document.getElementById('save-btn').disabled = false;
   document.getElementById('saveas-btn').disabled = false;
   document.getElementById('addrow-btn').disabled = false;
+  document.getElementById('select-all-btn').disabled = false;
   _alignments.clear();
   document.getElementById('status-wrap').style.display = 'none';
 
@@ -438,7 +443,8 @@ function updateCell(r, c, val) {
   ws['!ref'] = XLSX.utils.encode_range(rng);
 }
 
-// ===== セル整列 =====
+// ===== セル選択・整列 =====
+function cellKey(r, c) { return `${r}:${c}`; }
 function alignKey(r, c) { return `${_currentSheet}:${r}:${c}`; }
 
 function getCellDisplayAlign(cell, r, c) {
@@ -455,20 +461,48 @@ function updateAlignBtns(align) {
   document.getElementById('align-r-btn').classList.toggle('active', align === 'right');
 }
 
-function selectCell(el, r, c) {
-  if (_selectedCell && _selectedCell.el !== el) _selectedCell.el.classList.remove('cell-selected');
-  _selectedCell = { r, c, el };
-  el.classList.add('cell-selected');
-  const ws = workbook?.Sheets[_currentSheet];
-  const align = getCellDisplayAlign(ws ? getCellRaw(ws, r, c) : null, r, c) || 'left';
-  updateAlignBtns(align);
+function clearSelection() {
+  _selEls.forEach(el => el.classList.remove('cell-selected'));
+  _selEls.clear();
+}
+
+function applySelectionHighlight() {
+  clearSelection();
+  if (!_selRange) return;
+  const minR = Math.min(_selRange.r1, _selRange.r2), maxR = Math.max(_selRange.r1, _selRange.r2);
+  const minC = Math.min(_selRange.c1, _selRange.c2), maxC = Math.max(_selRange.c1, _selRange.c2);
+  for (let r = minR; r <= maxR; r++) {
+    for (let c = minC; c <= maxC; c++) {
+      const el = _cellEls.get(cellKey(r, c));
+      if (el) { el.classList.add('cell-selected'); _selEls.set(cellKey(r, c), el); }
+    }
+  }
+  // アライメントボタンを最初の選択セルの値で更新
+  const firstKey = _selEls.keys().next().value;
+  if (firstKey) {
+    const [fr, fc] = firstKey.split(':').map(Number);
+    const ws = workbook?.Sheets[_currentSheet];
+    const align = getCellDisplayAlign(ws ? getCellRaw(ws, fr, fc) : null, fr, fc) || 'left';
+    updateAlignBtns(align);
+  }
+}
+
+function selectAll() {
+  if (!workbook || !_currentSheet) return;
+  const ws = workbook.Sheets[_currentSheet];
+  if (!ws || !ws['!ref']) return;
+  const rng = XLSX.utils.decode_range(ws['!ref']);
+  _selRange = { r1: rng.s.r, c1: rng.s.c, r2: rng.e.r, c2: rng.e.c };
+  applySelectionHighlight();
 }
 
 function applyAlign(align) {
-  if (!_selectedCell) return;
-  const { r, c, el } = _selectedCell;
-  _alignments.set(alignKey(r, c), align);
-  el.style.textAlign = align;
+  if (_selEls.size === 0) return;
+  _selEls.forEach((el, key) => {
+    const [r, c] = key.split(':').map(Number);
+    _alignments.set(alignKey(r, c), align);
+    el.style.textAlign = align;
+  });
   updateAlignBtns(align);
 }
 
@@ -478,7 +512,7 @@ function addRow() {
   const ws = workbook.Sheets[_currentSheet];
   if (!ws['!ref']) ws['!ref'] = 'A1:A1';
   const rng = XLSX.utils.decode_range(ws['!ref']);
-  const insertAt = _selectedCell ? _selectedCell.r : rng.e.r + 1;
+  const insertAt = _selRange ? Math.min(_selRange.r1, _selRange.r2) : rng.e.r + 1;
 
   // 挿入行以降のセルを降順で1行下にシフト（競合防止）
   const cellKeys = Object.keys(ws)
@@ -514,15 +548,31 @@ function addRow() {
 
   rng.e.r++;
   ws['!ref'] = XLSX.utils.encode_range(rng);
-  _selectedCell = null;
+  _selRange = null;
   renderSheet(_currentSheet);
 }
 
 // ===== セル編集 =====
+document.addEventListener('mouseup', () => { _isDragging = false; });
+
 function attachEdit(el, r, c) {
+  _cellEls.set(cellKey(r, c), el);
+
+  el.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    _isDragging = true;
+    _selRange = { r1: r, c1: c, r2: r, c2: c };
+    applySelectionHighlight();
+  });
+
+  el.addEventListener('mouseenter', () => {
+    if (!_isDragging || !_selRange) return;
+    _selRange.r2 = r; _selRange.c2 = c;
+    applySelectionHighlight();
+  });
+
   el.addEventListener('click', () => {
-    selectCell(el, r, c);
-    if (!_editMode || el.classList.contains('cell-editing')) return;
+    if (!_editMode || el.classList.contains('cell-editing') || _selEls.size > 1) return;
     const ws = workbook.Sheets[_currentSheet];
     const old = getCellText(ws, r, c);
     el.classList.add('cell-editing');
@@ -556,7 +606,9 @@ function attachEdit(el, r, c) {
 function renderSheet(name) {
   if (!workbook) return;
   const ws = workbook.Sheets[name];
-  _selectedCell = null;
+  _cellEls.clear();
+  clearSelection();
+  _selRange = null;
 
   // 各テーブルをリセット
   ['list-header-table','list-body-table','grid-table'].forEach(id => {
