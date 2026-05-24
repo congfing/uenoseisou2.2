@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>カレンダービューア</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; -webkit-text-size-adjust: 100%; }
+body {
+  display: flex; flex-direction: column;
+  font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+  background: #edf3f8;
+}
+
+#header {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  background: linear-gradient(180deg, #ffffff, #eef5fc);
+  border-bottom: 1px solid #cfd8e3;
+  box-shadow: 0 2px 8px rgba(15,74,128,0.10);
+  z-index: 10;
+}
+#brand {
+  color: #0f4a80; font-size: 15px; font-weight: 900;
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sel-btn {
+  flex: 0 0 auto;
+  padding: 7px 16px; border: 1px solid #b8cce4; border-radius: 8px;
+  background: #fff; color: #31506f;
+  font: 800 13px 'Hiragino Sans','Meiryo',sans-serif;
+  cursor: pointer; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.sel-btn.active {
+  background: #1a6eb5; border-color: #0f4a80; color: #fff;
+}
+
+#frame-wrap {
+  flex: 1 1 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+}
+#cal-frame {
+  display: block; border: 0;
+  width: 100%; height: 100%;
+  min-height: 100%;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <span id="brand">収集カレンダー</span>
+  <button class="sel-btn active"
+    onclick="loadCal(this,'令和8年度収集カレンダー（月別）.html')">月別</button>
+  <button class="sel-btn"
+    onclick="loadCal(this,'令和8年度収集カレンダー（縦通し）.html')">縦通し</button>
+</div>
+
+<div id="frame-wrap">
+  <iframe id="cal-frame" src="令和8年度収集カレンダー（月別）.html"></iframe>
+</div>
+
+<script>
+function loadCal(btn, file) {
+  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cal-frame').src = file;
+}
+</script>
+
+</body>
+</html>
