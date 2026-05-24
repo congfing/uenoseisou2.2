@@ -1068,6 +1068,8 @@ function applyV22ColorsToDocument(doc, c) {
       border:1px solid ${c.border}!important;border-color:${c.border}!important;
     }
     * { color:${c.text}!important; }
+    .date-cell { background:transparent!important; background-color:transparent!important; }
+    .date-num { background:transparent!important; background-color:transparent!important; border:1px solid!important; }
   `;
 }
 function applyV22ColorsToAllWindows() { const c=getV22Colors(); saveV22Colors(); forEachWindowDocument((doc)=>applyV22ColorsToDocument(doc,c)); }

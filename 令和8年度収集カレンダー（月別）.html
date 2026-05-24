@@ -16,9 +16,13 @@ th { background:#f2f2f2; text-align:center; font-size:11px;
      padding:4px; border:1px solid #b0b0b0; }
 th.sat { color:#2E75B6; } th.sun { color:#CC0000; }
 
-.date-cell { text-align:right; vertical-align:top; padding:3px 5px 2px 3px;
+.date-cell { text-align:left; vertical-align:top; padding:3px 5px 2px 3px;
              font-size:12px; font-weight:bold; border:1px solid #b0b0b0;
-             border-bottom:1px dotted #ccc; height:32px; }
+             border-bottom:1px dotted #ccc; height:32px;
+             background:transparent!important; background-color:transparent!important; }
+.date-num { display:inline-block; border:1px solid; border-radius:2px;
+            padding:0 3px; min-width:18px; text-align:center; line-height:1.5;
+            background:transparent!important; background-color:transparent!important; }
 .hol-name { font-size:8px; font-weight:normal; display:block; margin-top:2px; }
 
 .ev-cell { text-align:left; vertical-align:top; background:#fff;
@@ -131,4 +135,13 @@ function showMonth(i){
   document.querySelectorAll('[id^="wrap-m"]').forEach((el,j)=>el.style.display=j===i?'block':'none');
   document.querySelectorAll('.tab-btn').forEach((el,j)=>el.classList.toggle('active',j===i));
 }
+document.querySelectorAll('.date-cell').forEach(function(td) {
+  var first = td.firstChild;
+  if (first && first.nodeType === 3 && first.textContent.trim()) {
+    var sp = document.createElement('span');
+    sp.className = 'date-num';
+    td.insertBefore(sp, first);
+    sp.appendChild(first);
+  }
+});
 </script></body></html>
