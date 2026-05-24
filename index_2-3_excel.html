@@ -11,8 +11,7 @@ html, body { height: 100%; overflow: hidden; }
 body {
   display: flex; flex-direction: column;
   font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN', 'Meiryo', sans-serif;
-  font-size: 12px;
-  -webkit-tap-highlight-color: transparent;
+  font-size: 12px; -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== HEADER ===== */
@@ -22,43 +21,44 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.18);
 }
 #app-header h1 { font-size: 14px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#file-label { font-size: 10px; opacity: 0.6; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
+#file-label { font-size: 10px; opacity: 0.6; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
 
 /* ===== TOOL PANEL ===== */
 #tool-panel { flex-shrink: 0; }
-#tool-panel-inner { display: flex; align-items: center; gap: 8px; padding: 7px 12px; flex-wrap: wrap; }
+#tool-panel-inner {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap;
+  scrollbar-width: none;
+}
+#tool-panel-inner::-webkit-scrollbar { display: none; }
 #tool-panel.collapsed #tool-panel-inner { display: none; }
 
 .tool-btn {
-  border: 1px solid; padding: 5px 12px; border-radius: 7px; font-size: 12px;
+  border: 1px solid; padding: 5px 11px; border-radius: 7px; font-size: 12px;
   cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
 }
-.tool-btn:disabled { opacity: 0.45; cursor: default; }
-
-.tool-sep { font-size: 11px; opacity: 0.4; padding: 0 2px; }
+.tool-btn:disabled { opacity: 0.4; cursor: default; }
+.tool-btn.active { font-weight: 700; }
+.tool-sep { opacity: 0.3; flex-shrink: 0; padding: 0 2px; }
 
 /* ===== TOOLBAR TOGGLE ===== */
 #toolbar-toggle {
   display: flex; align-items: center; justify-content: center;
-  width: 100%; padding: 2px 0;
-  border: none; border-top: 1px solid;
+  width: 100%; padding: 2px 0; border: none; border-top: 1px solid;
   cursor: pointer; font-size: 10px; font-family: inherit;
 }
 #tool-panel.collapsed #toolbar-toggle { border-top: none; padding: 4px 0; }
 
 /* ===== GITHUB DROPDOWN ===== */
 #gh-dropdown {
-  display: none; position: fixed;
-  border: 1px solid; border-radius: 8px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.2);
-  z-index: 1000; min-width: 270px; overflow: hidden;
+  display: none; position: fixed; border: 1px solid; border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.2); z-index: 1000; min-width: 270px; overflow: hidden;
 }
 #gh-dropdown.open { display: block; }
 #gh-dropdown-title { font-size: 11px; font-weight: 700; padding: 8px 12px 6px; border-bottom: 1px solid; }
 .gh-file-item {
-  display: block; width: 100%; text-align: left;
-  padding: 9px 14px; font-size: 12px; font-family: inherit;
-  background: none; border: none; border-bottom: 1px solid; cursor: pointer;
+  display: block; width: 100%; text-align: left; padding: 9px 14px; font-size: 12px;
+  font-family: inherit; background: none; border: none; border-bottom: 1px solid; cursor: pointer;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .gh-file-item:last-child { border-bottom: none; }
@@ -72,68 +72,102 @@ body {
 
 /* ===== SHEET TABS ===== */
 #sheet-tabs {
-  border-bottom: 1px solid;
-  padding: 6px 10px; overflow-x: auto; white-space: nowrap;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  border-bottom: 1px solid; padding: 6px 10px; overflow-x: auto;
+  white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;
   min-height: 38px; flex-shrink: 0;
 }
 #sheet-tabs::-webkit-scrollbar { display: none; }
 .sheet-btn {
   display: inline-block; padding: 4px 12px; margin-right: 5px;
-  border: 1px solid; border-radius: 16px;
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  white-space: nowrap; font-family: inherit;
+  border: 1px solid; border-radius: 16px; font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
 }
 .sheet-btn.active { font-weight: 800; }
 
 /* ===== TABLE WRAP ===== */
-#tbl-wrap {
-  flex: 1; overflow: auto; -webkit-overflow-scrolling: touch;
-}
+#tbl-wrap { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; }
 
 /* ===== STATUS ===== */
-#status {
-  text-align: center; padding: 60px 20px;
-  font-size: 14px; line-height: 2; opacity: 0.55;
-}
+#status { text-align: center; padding: 60px 20px; font-size: 14px; line-height: 2; opacity: 0.5; }
 
-/* ===== DATA TABLE ===== */
+/* ===== TABLE (共通) ===== */
 #data-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 11px;
-  white-space: nowrap;
+  border-collapse: separate; border-spacing: 0;
+  font-size: 11px; white-space: nowrap;
 }
-
-/* ヘッダー行（列記号 A B C...） */
-#data-table thead th {
-  position: sticky; top: 0; z-index: 2;
-  text-align: center; font-weight: 600; font-size: 10px; opacity: 0.75;
-  padding: 3px 4px;
+#data-table th, #data-table td {
   border-right: 1px solid; border-bottom: 1px solid;
+  padding: 3px 7px; vertical-align: top;
+  overflow: hidden; text-overflow: ellipsis;
+  max-width: 240px;
+}
+#data-table thead tr:first-child th { border-top: 1px solid; }
+#data-table tbody td:first-child,
+#data-table thead th:first-child { border-left: 1px solid; }
+
+/* ===== リストビュー ===== */
+#data-table.view-list thead th {
+  position: sticky; top: 0; z-index: 2;
+  font-weight: 700; font-size: 11px; text-align: left;
+  min-width: 80px;
+}
+#data-table.view-list tbody td { min-width: 80px; }
+#data-table.view-list tbody td.num { text-align: right; }
+
+/* ===== グリッドビュー ===== */
+#data-table.view-grid thead th {
+  position: sticky; top: 0; z-index: 2;
+  text-align: center; font-size: 10px; opacity: 0.65;
   min-width: 72px;
 }
-
-/* 行番号列 */
-#data-table .rn {
+#data-table.view-grid .rn {
   position: sticky; left: 0; z-index: 1;
   text-align: right; font-size: 10px; opacity: 0.5;
-  user-select: none; padding: 2px 6px 2px 4px;
-  border-right: 1px solid; border-bottom: 1px solid;
-  min-width: 36px; max-width: 44px;
+  min-width: 34px; max-width: 42px; padding: 2px 5px 2px 3px;
 }
-/* 左上コーナー（行番号 × 列ヘッダーの交差点） */
-#data-table thead th.rn { z-index: 3; text-align: center; }
+#data-table.view-grid thead th.rn { z-index: 3; }
+#data-table.view-grid tbody td { min-width: 72px; }
+#data-table.view-grid tbody td.num { text-align: right; }
 
-/* データセル */
-#data-table tbody td {
-  padding: 2px 6px; border-right: 1px solid; border-bottom: 1px solid;
-  vertical-align: top; min-width: 72px; max-width: 220px;
-  overflow: hidden; text-overflow: ellipsis;
+/* ===== 編集モード ===== */
+#data-table.edit-mode tbody td:not(.rn) { cursor: cell; }
+#data-table.edit-mode tbody td:not(.rn):hover {
+  outline: 2px solid; outline-offset: -2px;
 }
+#data-table.edit-mode thead th:not(.rn) { cursor: cell; }
+td.cell-editing, th.cell-editing { padding: 0 !important; }
+td.cell-editing input, th.cell-editing input {
+  display: block; width: 100%; min-height: 22px;
+  box-sizing: border-box; border: none; outline: 2px solid;
+  padding: 2px 6px; font: inherit; background: transparent;
+}
+.cell-modified { font-style: italic; }
 
-/* 数値セルは右寄せ */
-#data-table tbody td.num { text-align: right; }
+/* ===== 別名保存ダイアログ ===== */
+#saveas-overlay {
+  display: none; position: fixed; inset: 0; z-index: 3000;
+  background: rgba(0,0,0,0.45);
+  align-items: center; justify-content: center;
+}
+#saveas-overlay.open { display: flex; }
+#saveas-box {
+  border: 1px solid; border-radius: 12px;
+  padding: 22px 24px; max-width: 380px; width: 92%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+}
+#saveas-box h2 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+#saveas-box label { display: block; font-size: 11px; opacity: 0.7; margin-bottom: 4px; }
+#saveas-name {
+  width: 100%; padding: 7px 10px; border: 1px solid; border-radius: 6px;
+  font: inherit; font-size: 13px; margin-bottom: 12px; outline: none; background: transparent;
+}
+#saveas-ts-row { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 12px; cursor: pointer; }
+#saveas-preview {
+  font-size: 11px; opacity: 0.65; padding: 5px 8px; border: 1px dashed;
+  border-radius: 5px; margin-bottom: 16px; word-break: break-all;
+}
+#saveas-btns { display: flex; gap: 8px; justify-content: flex-end; }
+#saveas-btns button { padding: 7px 18px; border: 1px solid; border-radius: 7px; font: inherit; font-size: 12px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -147,11 +181,15 @@ body {
   <div id="tool-panel-inner">
     <button class="tool-btn" id="open-btn" onclick="document.getElementById('file-input').click()">📂 開く</button>
     <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none">
-    <button class="tool-btn" id="gh-btn" onclick="toggleGhDropdown()">☁️ GitHubから ▾</button>
+    <button class="tool-btn" id="gh-btn" onclick="toggleGhDropdown()">☁️ GitHub ▾</button>
     <span class="tool-sep">|</span>
-    <label style="font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer;">
-      <input type="checkbox" id="chk-header" checked> 1行目をヘッダーに
-    </label>
+    <button class="tool-btn active" id="btn-list" onclick="setView('list')" title="リスト表示">≡ リスト</button>
+    <button class="tool-btn" id="btn-grid" onclick="setView('grid')" title="グリッド表示">⊞ グリッド</button>
+    <span class="tool-sep">|</span>
+    <button class="tool-btn" id="edit-btn" onclick="toggleEdit()">✏️ 編集</button>
+    <span class="tool-sep">|</span>
+    <button class="tool-btn" id="save-btn" onclick="saveFile()" disabled>💾 保存</button>
+    <button class="tool-btn" id="saveas-btn" onclick="openSaveAs()" disabled>📝 別名保存</button>
   </div>
   <button id="toolbar-toggle" onclick="toggleToolPanel()">▼ ツール</button>
 </div>
@@ -162,25 +200,48 @@ body {
 
 <div id="path-bar"></div>
 <div id="sheet-tabs"><span style="font-size:12px;line-height:26px;opacity:0.45;">ファイルを選択してください</span></div>
-
 <div id="tbl-wrap">
   <div id="status">📂 「▼ ツール」→「📂 開く」からExcelファイルを選択してください。</div>
 </div>
 
+<!-- 別名保存ダイアログ -->
+<div id="saveas-overlay">
+  <div id="saveas-box">
+    <h2>📝 別名保存</h2>
+    <label>ファイル名（拡張子なし）</label>
+    <input type="text" id="saveas-name" oninput="updatePreview()">
+    <div id="saveas-ts-row" onclick="toggleTs()">
+      <input type="checkbox" id="saveas-ts" onchange="updatePreview()">
+      <span>タイムスタンプを追加</span>
+      <span style="opacity:0.5;font-size:11px;">（_YYYYMMDD_HHmmss）</span>
+    </div>
+    <div id="saveas-preview"></div>
+    <div id="saveas-btns">
+      <button onclick="closeSaveAs()">キャンセル</button>
+      <button onclick="executeSaveAs()" style="font-weight:700;">⬇ ダウンロード</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ===== GitHub設定（必要なら追記）=====
+// ===== GitHub設定 =====
 const GH_BASE = 'https://raw.githubusercontent.com/congfing/uenoseisou2.2/main/';
 const GITHUB_FILES = [
   // 例: { name: 'sample.xlsx', url: GH_BASE + encodeURIComponent('sample.xlsx') },
 ];
 
-// ===== ドロップダウン初期化 =====
+// ===== State =====
+let workbook    = null;
+let _currentSheet = null;
+let _filename   = '';
+let _viewMode   = 'list';   // 'list' | 'grid'
+let _editMode   = false;
+let _modified   = false;
+
+// ===== Dropdown build =====
 (function() {
   const dd = document.getElementById('gh-dropdown');
-  if (GITHUB_FILES.length === 0) {
-    document.getElementById('gh-btn').style.display = 'none';
-    return;
-  }
+  if (GITHUB_FILES.length === 0) { document.getElementById('gh-btn').style.display = 'none'; return; }
   GITHUB_FILES.forEach((f, i) => {
     const btn = document.createElement('button');
     btn.className = 'gh-file-item';
@@ -193,10 +254,10 @@ const GITHUB_FILES = [
 // ===== ツールパネル =====
 function toggleToolPanel() {
   const panel = document.getElementById('tool-panel');
-  const btn = document.getElementById('toolbar-toggle');
-  const isCollapsed = panel.classList.toggle('collapsed');
-  btn.textContent = isCollapsed ? '▼ ツール' : '▲ 閉じる';
-  if (isCollapsed) closeGhDropdown();
+  const btn   = document.getElementById('toolbar-toggle');
+  const isCol = panel.classList.toggle('collapsed');
+  btn.textContent = isCol ? '▼ ツール' : '▲ 閉じる';
+  if (isCol) closeGhDropdown();
 }
 function closeToolPanel() {
   document.getElementById('tool-panel').classList.add('collapsed');
@@ -204,18 +265,15 @@ function closeToolPanel() {
   closeGhDropdown();
 }
 
-// ===== GitHub ドロップダウン =====
+// ===== GitHub =====
 function toggleGhDropdown() {
   const dd = document.getElementById('gh-dropdown');
   if (dd.classList.contains('open')) { closeGhDropdown(); return; }
   const rect = document.getElementById('gh-btn').getBoundingClientRect();
-  dd.style.top  = (rect.bottom + 4) + 'px';
-  dd.style.left = rect.left + 'px';
+  dd.style.top = (rect.bottom + 4) + 'px'; dd.style.left = rect.left + 'px';
   dd.classList.add('open');
 }
-function closeGhDropdown() {
-  document.getElementById('gh-dropdown').classList.remove('open');
-}
+function closeGhDropdown() { document.getElementById('gh-dropdown').classList.remove('open'); }
 document.addEventListener('click', e => {
   if (!e.target.closest('#gh-btn') && !e.target.closest('#gh-dropdown')) closeGhDropdown();
 });
@@ -229,30 +287,24 @@ async function loadFromGitHub(file, idx) {
     const buf = await res.arrayBuffer();
     document.getElementById('file-label').textContent = file.name;
     setPathBar('☁️ ' + file.name, file.url);
+    _filename = file.name;
     closeToolPanel();
-    loadWorkbook(buf, file.name);
-  } catch(e) {
-    alert('GitHubからの読み込みに失敗しました。\n' + e.message);
-  } finally {
-    btn.disabled = false;
-  }
+    loadWorkbook(buf);
+  } catch(e) { alert('GitHubからの読み込みに失敗しました。\n' + e.message); }
+  finally { btn.disabled = false; }
 }
 
 // ===== ローカルファイル =====
 document.getElementById('file-input').addEventListener('change', function() {
-  const file = this.files[0];
-  if (!file) return;
+  const file = this.files[0]; if (!file) return;
+  _filename = file.name;
   document.getElementById('file-label').textContent = file.name;
   setPathBar('📂 ' + file.name, '');
   closeToolPanel();
   const reader = new FileReader();
-  reader.onload = e => loadWorkbook(e.target.result, file.name);
+  reader.onload = e => loadWorkbook(e.target.result);
   reader.readAsArrayBuffer(file);
   this.value = '';
-});
-
-document.getElementById('chk-header').addEventListener('change', () => {
-  if (_currentSheet) renderSheet(_currentSheet);
 });
 
 function setPathBar(name, url) {
@@ -262,16 +314,14 @@ function setPathBar(name, url) {
 }
 
 // ===== ワークブック読み込み =====
-let workbook = null;
-let _currentSheet = null;
-
-function loadWorkbook(buf, filename) {
+function loadWorkbook(buf) {
   try {
     workbook = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true, cellNF: true });
-  } catch(e) {
-    alert('ファイルの読み込みに失敗しました。\n' + e.message);
-    return;
-  }
+  } catch(e) { alert('読み込みに失敗しました。\n' + e.message); return; }
+  _modified = false;
+  document.getElementById('save-btn').disabled = false;
+  document.getElementById('saveas-btn').disabled = false;
+
   const tabsEl = document.getElementById('sheet-tabs');
   tabsEl.innerHTML = '';
   workbook.SheetNames.forEach((name, i) => {
@@ -287,89 +337,272 @@ function loadWorkbook(buf, filename) {
 
 function selectSheet(name) {
   _currentSheet = name;
-  document.querySelectorAll('.sheet-btn').forEach(b =>
-    b.classList.toggle('active', b.textContent === name)
-  );
+  document.querySelectorAll('.sheet-btn').forEach(b => b.classList.toggle('active', b.textContent === name));
   renderSheet(name);
 }
 
-// ===== 列記号変換（0→A, 25→Z, 26→AA ...）=====
+// ===== ビュー切替 =====
+function setView(mode) {
+  _viewMode = mode;
+  document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+  document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
+  if (_currentSheet) renderSheet(_currentSheet);
+}
+
+// ===== 編集モード切替 =====
+function toggleEdit() {
+  _editMode = !_editMode;
+  const btn = document.getElementById('edit-btn');
+  btn.textContent = _editMode ? '✅ 編集中' : '✏️ 編集';
+  btn.classList.toggle('active', _editMode);
+  const tbl = document.getElementById('data-table');
+  if (tbl) tbl.classList.toggle('edit-mode', _editMode);
+}
+
+// ===== 列記号 =====
 function colLetter(c) {
   let s = ''; c++;
   while (c > 0) { s = String.fromCharCode(65 + (c - 1) % 26) + s; c = Math.floor((c - 1) / 26); }
   return s;
 }
 
-// ===== シートレンダリング =====
+// ===== タイムスタンプ =====
+function getTimestamp() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+}
+
+// ===== セル値取得 =====
+function getCellDisplay(ws, r, c) {
+  const addr = XLSX.utils.encode_cell({ r, c });
+  const cell = ws[addr];
+  if (!cell) return '';
+  return cell.w !== undefined ? cell.w : (cell.v !== null && cell.v !== undefined ? String(cell.v) : '');
+}
+
+function getCellRaw(ws, r, c) {
+  const addr = XLSX.utils.encode_cell({ r, c });
+  return ws[addr];
+}
+
+// ===== セル更新 =====
+function updateCell(r, c, val) {
+  if (!workbook || !_currentSheet) return;
+  const ws = workbook.Sheets[_currentSheet];
+  const addr = XLSX.utils.encode_cell({ r, c });
+  if (val === '') {
+    delete ws[addr];
+  } else {
+    const num = Number(val);
+    if (!isNaN(num) && val.trim() !== '') {
+      ws[addr] = { t: 'n', v: num, w: val };
+    } else {
+      ws[addr] = { t: 's', v: val, w: val };
+    }
+  }
+  _modified = true;
+  // !ref の範囲更新
+  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:A1');
+  if (r > range.e.r) range.e.r = r;
+  if (c > range.e.c) range.e.c = c;
+  ws['!ref'] = XLSX.utils.encode_range(range);
+}
+
+// ===== セル編集開始 =====
+function startCellEdit(el, r, c) {
+  if (el.classList.contains('cell-editing')) return;
+  const ws = workbook.Sheets[_currentSheet];
+  const oldVal = getCellDisplay(ws, r, c);
+
+  el.classList.add('cell-editing');
+  el.textContent = '';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = oldVal;
+  el.appendChild(input);
+  input.focus(); input.select();
+
+  const commit = () => {
+    const newVal = input.value;
+    el.classList.remove('cell-editing');
+    el.textContent = newVal;
+    if (newVal !== oldVal) {
+      updateCell(r, c, newVal);
+      el.classList.add('cell-modified');
+    }
+  };
+  const cancel = () => {
+    el.classList.remove('cell-editing');
+    el.textContent = oldVal;
+  };
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); input.removeEventListener('blur', commit); commit(); }
+    if (e.key === 'Escape') { input.removeEventListener('blur', commit); cancel(); }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      input.removeEventListener('blur', commit);
+      commit();
+      // 次のセルへ
+      const next = el.parentElement.cells[el.cellIndex + (e.shiftKey ? -1 : 1)];
+      if (next && !next.classList.contains('rn')) next.click();
+    }
+  });
+}
+
+// ===== レンダリング =====
 function renderSheet(name) {
   const wrap = document.getElementById('tbl-wrap');
   const ws = workbook.Sheets[name];
-
-  if (!ws || !ws['!ref']) {
-    wrap.innerHTML = '<div id="status">（空のシート）</div>';
-    return;
-  }
+  if (!ws || !ws['!ref']) { wrap.innerHTML = '<div id="status">（空のシート）</div>'; return; }
 
   const range = XLSX.utils.decode_range(ws['!ref']);
-  const maxR = range.e.r;
-  const maxC = range.e.c;
-  const useHeader = document.getElementById('chk-header').checked;
+  const maxR  = range.e.r;
+  const maxC  = range.e.c;
 
-  const frag = document.createDocumentFragment();
   const table = document.createElement('table');
   table.id = 'data-table';
+  table.className = `view-${_viewMode}` + (_editMode ? ' edit-mode' : '');
 
-  // ===== thead（列記号行）=====
+  if (_viewMode === 'list') {
+    renderList(table, ws, maxR, maxC);
+  } else {
+    renderGrid(table, ws, maxR, maxC);
+  }
+
+  wrap.innerHTML = '';
+  wrap.appendChild(table);
+}
+
+// ===== リストビュー =====
+function renderList(table, ws, maxR, maxC) {
   const thead = table.createTHead();
   const htr = thead.insertRow();
 
-  const cornerTh = document.createElement('th');
-  cornerTh.className = 'rn';
-  cornerTh.textContent = '';
-  htr.appendChild(cornerTh);
+  // 1行目をヘッダーに
+  for (let c = 0; c <= maxC; c++) {
+    const th = document.createElement('th');
+    const val = getCellDisplay(ws, 0, c);
+    th.textContent = val || colLetter(c);
+    th.title = th.textContent;
+    if (_editMode) attachEditTh(th, 0, c);
+    htr.appendChild(th);
+  }
 
+  // 2行目以降をデータに
+  const tbody = table.createTBody();
+  for (let r = 1; r <= maxR; r++) {
+    const tr = tbody.insertRow();
+    for (let c = 0; c <= maxC; c++) {
+      const td = tr.insertCell();
+      const cell = getCellRaw(ws, r, c);
+      const val  = getCellDisplay(ws, r, c);
+      td.textContent = val;
+      if (val) td.title = val;
+      if (cell && typeof cell.v === 'number') td.classList.add('num');
+      if (_editMode) attachEditTd(td, r, c);
+    }
+  }
+}
+
+// ===== グリッドビュー =====
+function renderGrid(table, ws, maxR, maxC) {
+  const thead = table.createTHead();
+  const htr = thead.insertRow();
+  // 左上コーナー
+  const corner = document.createElement('th');
+  corner.className = 'rn'; corner.textContent = '';
+  htr.appendChild(corner);
+  // 列記号
   for (let c = 0; c <= maxC; c++) {
     const th = document.createElement('th');
     th.textContent = colLetter(c);
     htr.appendChild(th);
   }
 
-  // ===== tbody =====
   const tbody = table.createTBody();
-
-  const startR = 0;
-  for (let r = startR; r <= maxR; r++) {
+  for (let r = 0; r <= maxR; r++) {
     const tr = tbody.insertRow();
-
     // 行番号
     const rnTd = tr.insertCell();
-    rnTd.className = 'rn';
-    rnTd.textContent = r + 1;
-
-    // 1行目をヘッダー扱い（太字）にするための判定
-    const isHeaderRow = useHeader && r === 0;
-    if (isHeaderRow) tr.style.fontWeight = '700';
-
+    rnTd.className = 'rn'; rnTd.textContent = r + 1;
+    // データ
     for (let c = 0; c <= maxC; c++) {
       const td = tr.insertCell();
-      const addr = XLSX.utils.encode_cell({ r, c });
-      const xlCell = ws[addr];
-      if (xlCell !== undefined && xlCell !== null) {
-        const raw = xlCell.v;
-        const disp = xlCell.w !== undefined ? xlCell.w : (raw !== null && raw !== undefined ? String(raw) : '');
-        td.textContent = disp;
-        if (disp) td.title = disp;
-        // 数値判定
-        if (typeof raw === 'number' && !isHeaderRow) td.classList.add('num');
-      }
+      const cell = getCellRaw(ws, r, c);
+      const val  = getCellDisplay(ws, r, c);
+      td.textContent = val;
+      if (val) td.title = val;
+      if (cell && typeof cell.v === 'number') td.classList.add('num');
+      if (_editMode) attachEditTd(td, r, c);
     }
   }
-
-  table.appendChild(tbody);
-  frag.appendChild(table);
-  wrap.innerHTML = '';
-  wrap.appendChild(frag);
 }
+
+function attachEditTd(td, r, c) {
+  td.addEventListener('click', () => { if (_editMode) startCellEdit(td, r, c); });
+}
+function attachEditTh(th, r, c) {
+  th.addEventListener('click', () => { if (_editMode) startCellEdit(th, r, c); });
+}
+
+// ===== 保存（ダウンロード）=====
+function saveFile() {
+  if (!workbook) return;
+  const buf = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+  downloadAs(buf, _filename || 'download.xlsx');
+}
+
+function downloadAs(data, filename) {
+  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===== 別名保存ダイアログ =====
+function openSaveAs() {
+  if (!workbook) return;
+  const base = _filename.replace(/\.[^.]+$/, '') || 'download';
+  document.getElementById('saveas-name').value = base;
+  document.getElementById('saveas-ts').checked = false;
+  updatePreview();
+  document.getElementById('saveas-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('saveas-name').focus(), 80);
+}
+function closeSaveAs() { document.getElementById('saveas-overlay').classList.remove('open'); }
+
+function toggleTs() {
+  const cb = document.getElementById('saveas-ts');
+  cb.checked = !cb.checked;
+  updatePreview();
+}
+function updatePreview() {
+  const name  = document.getElementById('saveas-name').value || 'download';
+  const useTs = document.getElementById('saveas-ts').checked;
+  const ts    = useTs ? '_' + getTimestamp() : '';
+  document.getElementById('saveas-preview').textContent = '→ ' + name + ts + '.xlsx';
+}
+
+function executeSaveAs() {
+  const name  = document.getElementById('saveas-name').value.trim() || 'download';
+  const useTs = document.getElementById('saveas-ts').checked;
+  const ts    = useTs ? '_' + getTimestamp() : '';
+  const fname = name + ts + '.xlsx';
+  const buf   = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+  downloadAs(buf, fname);
+  closeSaveAs();
+}
+
+// ダイアログ外クリックで閉じる
+document.getElementById('saveas-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSaveAs();
+});
+// Escキーでダイアログを閉じる
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSaveAs(); });
 </script>
 </body>
 </html>
