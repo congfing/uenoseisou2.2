@@ -6,12 +6,10 @@
 <title>計量物件表 記入箇所メモ（v5-1）</title>
 <style>
   :root {
-    --bg: #f5f7fa;
     --panel: #ffffff;
     --border: #d9dde3;
     --accent: #1f6feb;
     --accent-dark: #155ac4;
-    --text: #1f2328;
     --muted: #57606a;
     --tag: #eef3fb;
     --tag-text: #0b4cb1;
@@ -20,14 +18,10 @@
   html, body { overscroll-behavior-x: contain;
     margin: 0;
     padding: 0;
-    background: var(--bg);
-    color: var(--text);
     font-family: -apple-system, "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
     -webkit-text-size-adjust: 100%;
   }
   header {
-    background: linear-gradient(135deg, #1f6feb, #0b4cb1);
-    color: #fff;
     padding: 18px 20px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
@@ -47,7 +41,6 @@
     padding: 20px 16px 60px;
   }
   .selector {
-    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
@@ -69,7 +62,6 @@
     font-size: 16px;
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    background: #fff;
     color: var(--text);
     appearance: none;
     -webkit-appearance: none;
@@ -105,7 +97,6 @@
     font-family: inherit;
   }
   .clear-btn {
-    background: #eef1f5;
     color: var(--muted);
     padding: 0 14px;
     white-space: nowrap;
@@ -119,13 +110,11 @@
   .link-btn {
     display: inline-block;
     text-decoration: none;
-    background: var(--accent);
     color: #fff;
     padding: 10px 14px;
     font-size: 13px;
   }
   .link-btn.secondary {
-    background: #eef3fb;
     color: var(--tag-text);
   }
   .hit-count {
@@ -137,7 +126,6 @@
     margin-top: 20px;
   }
   .card {
-    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
@@ -160,7 +148,6 @@
   }
   .property-no {
     display: inline-block;
-    background: var(--accent);
     color: #fff;
     font-weight: 700;
     padding: 4px 12px;
@@ -175,7 +162,6 @@
   }
   .file-tag {
     display: inline-block;
-    background: var(--tag);
     color: var(--tag-text);
     font-size: 12px;
     padding: 3px 10px;
@@ -221,7 +207,6 @@
     color: var(--text);
   }
   .file-header-note {
-    background: #fffbea;
     border: 1px solid #f5d87a;
     border-radius: 8px;
     padding: 10px 12px;
@@ -231,7 +216,6 @@
     line-height: 1.6;
   }
   .note-block {
-    background: #f4f6f9;
     border-left: 3px solid #9aa5b4;
     padding: 8px 12px;
     font-size: 13px;
@@ -251,80 +235,6 @@
     main { padding: 14px 12px 40px; }
     .card { padding: 16px; }
     .meta-grid { grid-template-columns: 90px 1fr; }
-  }
-
-  /* === v2.2 unified design === */
-  * { box-sizing: border-box; }
-  body { background: #fff !important; color: #000 !important; }
-  * { color: #000 !important; }
-
-  /* 背景を白に */
-  body, html, main, .screen, .panel, .card, .prop-card, section,
-  .container, .content, header, .header, #app-header, nav,
-  .topbar, .toolbar, #toolbar, #toolbar-inner, #toolbar-toggle,
-  .tool-panel, .staff-list, .staff-item, .prop-card-body,
-  .continue-panel, #colPanel, .col-lbl, #filterPopup, #saveDialogBox,
-  #hist-panel, .history-item, .hist-item, .section-title,
-  .count-badge, .nav-tab, .nav-tabs, .day-save-single,
-  #dataTable thead th, #dataTable tbody tr,
-  #dataTable tbody tr:nth-child(even), #dataTable tbody tr:hover,
-  .gh-file-item, .tool-toggle, .sheet-btn, .fp-row button,
-  .btn, .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger,
-  .toolbar-btn, .tb-btn, .back-btn, .view-btn, .add-tab-btn,
-  .col-lbl.on, .day-dot, .day-dot.today,
-  .staff-item.selected, .prop-card.done {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-  }
-
-  /* 枠線 + 角丸 */
-  table, th, td, input, select, button, textarea,
-  .btn, .toolbar-btn, .tb-btn, .back-btn, .nav-tab, .view-btn,
-  .prop-card, .staff-item, .day-save-single,
-  #dataTable th, #dataTable td,
-  #filterPopup, #saveDialogBox, .col-lbl,
-  header, .topbar, .toolbar, #toolbar, .tool-panel,
-  .history-item, .hist-item, .sheet-btn {
-    border: 1px solid #000 !important;
-    border-color: #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* カード・セクションタイトル */
-  .card, .section-title {
-    border: 1px solid #000 !important;
-    border-radius: 12px !important;
-  }
-
-  /* 入力フォーム */
-  input[type=text], input[type=number], input[type=date],
-  select, textarea {
-    color: #000 !important;
-    background: #fff !important;
-    border: 1px solid #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* v2.2 thead fix */
-  #dataTable thead tr th,
-  #dataTable thead tr th.col-ctrl,
-  #dataTable thead tr th:hover,
-  #dataTable thead tr th.col-ctrl:hover {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
-    border-radius: 0 !important;
-  }
-
-  /* カード文字色補完 */
-  .card, .card *, .screen-content, .section-sub,
-  .fields-label, .fields-group, .setting-section {
-    color: #000 !important;
-    border-color: #000 !important;
   }
 
 </style>

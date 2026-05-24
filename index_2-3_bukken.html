@@ -12,13 +12,10 @@
     margin: 0;
     font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN', 'Meiryo', 'メイリオ', sans-serif;
     font-size: 13px;
-    background: #f0f4f8;
-    color: #222;
   }
 
   /* ===== HEADER ===== */
   #app-header {
-    color: #fff;
     padding: 7px 14px;
     display: flex;
     align-items: center;
@@ -65,7 +62,6 @@
 
   /* ===== TOOLBAR ===== */
   #toolbar {
-    background: #e8f0fb;
     border-bottom: 1px solid #b5cef5;
     position: sticky;
     top: 46px;
@@ -92,7 +88,6 @@
     justify-content: center;
     width: 100%;
     padding: 2px 0;
-    background: #d4e5f9;
     border: none;
     border-top: 1px solid #b5cef5;
     cursor: pointer;
@@ -110,7 +105,6 @@
   }
 
   #toolbar label.file-label {
-    background: #fff;
     color: #000;
     padding: 5px 12px;
     border-radius: 4px;
@@ -128,7 +122,6 @@
     border: 1px solid #a0b8d8;
     border-radius: 4px;
     font-size: 12px;
-    background: #fff;
     max-width: 200px;
   }
 
@@ -144,7 +137,6 @@
     padding: 5px 11px;
     border: 1px solid #a0b8d8;
     border-radius: 4px;
-    background: #fff;
     cursor: pointer;
     font-size: 12px;
     white-space: nowrap;
@@ -171,7 +163,6 @@
     border-collapse: collapse;
     min-width: 100%;
     table-layout: auto;
-    background: #fff;
   }
 
   /* Sticky header */
@@ -261,7 +252,6 @@
     font-size: 12px;
     text-align: center;
     font-family: inherit;
-    background: #fff;
     vertical-align: middle;
   }
   .row-num-input:focus { outline: 2px solid #1a6eb5; }
@@ -376,8 +366,6 @@
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #1a7a3c;
-    color: #fff;
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 14px;
@@ -406,7 +394,6 @@
   }
 
   #dupPanelInner {
-    background: #fff;
     border-radius: 8px;
     padding: 24px;
     max-width: 520px;
@@ -436,7 +423,6 @@
     font-size: 12px;
   }
   #dupTable th {
-    background: #e8f0fb;
     padding: 5px 10px;
     text-align: left;
     font-weight: 600;
@@ -523,7 +509,6 @@
     padding: 7px 18px;
     border: 1px solid #aaa;
     border-radius: 4px;
-    background: #fff;
     cursor: pointer;
     font-family: inherit;
     font-size: 13px;
@@ -549,13 +534,13 @@
   }
   #saveDialog.active { display:flex; }
   #saveDialogBox {
-    background:#fff; border-radius:12px; padding:22px 22px 18px;
+    border-radius:12px; padding:22px 22px 18px;
     width:calc(100% - 40px); max-width:340px;
     box-shadow:0 8px 32px rgba(0,0,0,0.28);
   }
   #saveDialogBox h3 { font-size:15px; color:#1a6eb5; margin-bottom:6px; }
   #saveDialogFilename {
-    font-size:11px; color:#666; background:#f4f7fb;
+    font-size:11px; color:#666;
     border:1px solid #dde8f5; border-radius:4px;
     padding:6px 10px; margin:10px 0 16px; word-break:break-all;
   }
@@ -566,7 +551,7 @@
   }
   #sdlgOverwrite { background:#1a6eb5; color:#fff; }
   #sdlgOverwrite:hover { background:#1558a0; }
-  #sdlgSaveAs { background:#e8f0fb; color:#1a6eb5; border:1px solid #b5cef5; }
+  #sdlgSaveAs { color:#1a6eb5; border:1px solid #b5cef5; }
   #sdlgSaveAs:hover { background:#d4e5f9; }
   #sdlgCancel { background:none; color:#888; font-size:12px; margin-bottom:0; }
   #sdlgNewName { font-size:11px; color:#888; text-align:center; margin-top:-4px; margin-bottom:10px; }
@@ -585,7 +570,7 @@
   #hist-overlay.show { display: block; }
   #hist-panel {
     position: fixed; top: 44px; right: -105%; width: min(340px, 92vw);
-    height: calc(100dvh - 44px); background: #fff; z-index: 700;
+    height: calc(100dvh - 44px); z-index: 700;
     box-shadow: -4px 0 24px rgba(0,0,0,0.2);
     transition: right 0.25s ease;
     display: flex; flex-direction: column;
@@ -593,7 +578,6 @@
   }
   #hist-panel.open { right: 0; }
   #hist-panel-hdr {
-    background: linear-gradient(135deg,#1e40af,#2563eb); color:#fff;
     padding: 12px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0;
   }
   #hist-panel-hdr span { flex:1; font-size:14px; font-weight:700; }
@@ -603,7 +587,6 @@
   }
   #hist-save-btn {
     margin:10px 12px 8px; padding:10px 0;
-    background: linear-gradient(135deg,#1a6eb5,#2563eb);
     color:#fff; border:none; border-radius:9px;
     font-size:13px; font-weight:700; font-family:inherit; cursor:pointer;
     flex-shrink:0; transition:opacity 0.15s;
@@ -613,7 +596,7 @@
   #hist-list { overflow-y:auto; flex:1; padding:0 10px 10px; -webkit-overflow-scrolling:touch; }
   .hist-item {
     display:flex; align-items:center; gap:8px; padding:9px 10px;
-    background:#f0f6ff; border:1px solid #c7daf5; border-radius:8px;
+    border:1px solid #c7daf5; border-radius:8px;
     margin-bottom:6px; cursor:pointer; transition:background 0.15s;
   }
   .hist-item:active { background:#dbeafe; }
@@ -687,7 +670,7 @@
 </div>
 
 <!-- フィルターポップアップ -->
-<div id="youbiPopup" style="display:none; position:fixed; z-index:250; background:#fff; border:1px solid #b5cef5; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,0.22); padding:12px 14px; min-width:210px; max-width:260px;">
+<div id="youbiPopup" style="display:none; position:fixed; z-index:250; border:1px solid #b5cef5; border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,0.22); padding:12px 14px; min-width:210px; max-width:260px;">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
     <strong id="youbiPopupTitle" style="font-size:14px; color:#1a6eb5;"></strong>
     <button id="youbiPopupClose" style="background:none;border:none;font-size:16px;cursor:pointer;color:#888;padding:0 2px;">✕</button>

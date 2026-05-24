@@ -334,79 +334,6 @@
     }
   }
 
-  /* === v2.2 unified design === */
-  * { box-sizing: border-box; }
-  body { background: #fff !important; color: #000 !important; }
-  * { color: #000 !important; }
-
-  /* 背景を白に */
-  body, html, main, .screen, .panel, .card, .prop-card, section,
-  .container, .content, header, .header, #app-header, nav,
-  .topbar, .toolbar, #toolbar, #toolbar-inner, #toolbar-toggle,
-  .tool-panel, .staff-list, .staff-item, .prop-card-body,
-  .continue-panel, #colPanel, .col-lbl, #filterPopup, #saveDialogBox,
-  #hist-panel, .history-item, .hist-item, .section-title,
-  .count-badge, .nav-tab, .nav-tabs, .day-save-single,
-  #dataTable thead th, #dataTable tbody tr,
-  #dataTable tbody tr:nth-child(even), #dataTable tbody tr:hover,
-  .gh-file-item, .tool-toggle, .sheet-btn, .fp-row button,
-  .btn, .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger,
-  .toolbar-btn, .tb-btn, .back-btn, .view-btn, .add-tab-btn,
-  .col-lbl.on, .day-dot, .day-dot.today,
-  .staff-item.selected, .prop-card.done {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-  }
-
-  /* 枠線 + 角丸 */
-  table, th, td, input, select, button, textarea,
-  .btn, .toolbar-btn, .tb-btn, .back-btn, .nav-tab, .view-btn,
-  .prop-card, .staff-item, .day-save-single,
-  #dataTable th, #dataTable td,
-  #filterPopup, #saveDialogBox, .col-lbl,
-  header, .topbar, .toolbar, #toolbar, .tool-panel,
-  .history-item, .hist-item, .sheet-btn {
-    border: 1px solid #000 !important;
-    border-color: #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* カード・セクションタイトル */
-  .card, .section-title {
-    border: 1px solid #000 !important;
-    border-radius: 12px !important;
-  }
-
-  /* 入力フォーム */
-  input[type=text], input[type=number], input[type=date],
-  select, textarea {
-    color: #000 !important;
-    background: #fff !important;
-    border: 1px solid #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* v2.2 thead fix */
-  #dataTable thead tr th,
-  #dataTable thead tr th.col-ctrl,
-  #dataTable thead tr th:hover,
-  #dataTable thead tr th.col-ctrl:hover {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
-    border-radius: 0 !important;
-  }
-
-  /* カード文字色補完 */
-  .card, .card *, .screen-content, .section-sub,
-  .fields-label, .fields-group, .setting-section {
-    color: #000 !important;
-    border-color: #000 !important;
-  }
 </style>
 </head>
 <body>
@@ -417,6 +344,10 @@
   </header>
   <section class="tool-panel collapsed" id="toolPanel">
     <div class="tool-inner">
+      <span class="tool-sep">下地色</span>
+      <input class="color-picker" type="color" id="bgColorPicker" value="#edf3f8" title="背景色（下地）">
+      <div class="color-presets" id="bgColorPresets" aria-label="背景色候補"></div>
+      <span class="tool-sep">─</span>
       <button class="tool-btn" type="button" id="gdriveBtn">GDrive</button>
       <button class="tool-btn" type="button" id="addEditorBtn">Editorを追加</button>
       <select class="tool-select" id="githubFileSelect" title="GitHubのHTMLを選択">
@@ -427,8 +358,6 @@
         <option value="">削除するWindowを選択</option>
       </select>
       <button class="tool-btn delete" type="button" id="deleteWindowBtn">削除</button>
-      <input class="color-picker" type="color" id="bgColorPicker" value="#edf3f8" title="背景色">
-      <div class="color-presets" id="bgColorPresets" aria-label="背景色候補"></div>
       <label class="effect-check"><input type="checkbox" id="softBorderEnable">枠線<input class="effect-color" type="color" id="softBorderColor" value="#1a6eb5"></label>
       <label class="effect-check"><input type="checkbox" id="softFrameBgEnable">枠背景<input class="effect-color" type="color" id="softFrameBgColor" value="#ffffff"></label>
       <label class="effect-check"><input type="checkbox" id="softTitleBarEnable">TitleBar<input class="effect-color" type="color" id="softTitleBarColor" value="#1a6eb5"></label>

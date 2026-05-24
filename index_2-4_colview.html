@@ -7,10 +7,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
-  body { overscroll-behavior-x: contain; margin:0; font-family:'Hiragino Sans','ヒラギノ角ゴ ProN','Meiryo','メイリオ',sans-serif; font-size:13px; font-weight:400; background:#f0f4f8; color:#222; }
+  body { overscroll-behavior-x: contain; margin:0; font-family:'Hiragino Sans','ヒラギノ角ゴ ProN','Meiryo','メイリオ',sans-serif; font-size:13px; font-weight:400; }
 
   #app-header {
-    color:#fff; padding:10px 16px;
+    padding:10px 16px;
     display:flex; align-items:center; gap:10px;
     position:sticky; top:0; z-index:120;
     box-shadow:0 2px 6px rgba(0,0,0,0.25);
@@ -26,7 +26,7 @@
   #fileNameDisplay { font-size:10px; opacity:0.8; line-height:1.3; text-align:right; flex-shrink:0; max-width:38%; overflow:hidden; }
 
   #toolbar {
-    background:#e8f0fb; border-bottom:1px solid #b5cef5;
+    border-bottom:1px solid #b5cef5;
     position:sticky; top:44px; z-index:119;
   }
   #toolbar-inner {
@@ -41,7 +41,7 @@
   #toolbar-toggle {
     display:flex; align-items:center; justify-content:center;
     width:100%; padding:2px 0;
-    background:#d4e5f9; border:none; border-top:1px solid #b5cef5;
+    border:none; border-top:1px solid #b5cef5;
     cursor:pointer; font-size:10px; color:#4a6fa5;
     font-family:inherit; transition:background 0.15s;
   }
@@ -49,7 +49,7 @@
   #toolbar.collapsed #toolbar-toggle { border-top:none; padding:4px 0; }
   .tb-btn {
     padding:4px 10px; border:1px solid #a0b8d8; border-radius:4px;
-    background:#fff; cursor:pointer; font-size:11px; font-family:inherit; white-space:nowrap;
+    cursor:pointer; font-size:11px; font-family:inherit; white-space:nowrap;
   }
   .tb-btn:hover { background:#d4e5f9; }
   #searchInput {
@@ -58,18 +58,18 @@
   }
   #gitFileSelector {
     padding:4px 8px; border:1px solid #a0b8d8; border-radius:4px;
-    font-size:12px; background:#fff; max-width:190px;
+    font-size:12px; max-width:190px;
   }
   #sheetSelector {
     padding:4px 8px; border:1px solid #a0b8d8; border-radius:4px;
-    font-size:12px; background:#fff; max-width:150px;
+    font-size:12px; max-width:150px;
   }
   #sheetSelector:disabled { color: #aaa; }
   #statusBar { font-size:11px; color:#555; }
 
   /* 列チェックボックスパネル */
   #colPanel {
-    background:#fff; border-bottom:2px solid #b5cef5;
+    border-bottom:2px solid #b5cef5;
     padding:8px 14px; display:none; flex-wrap:wrap; gap:6px; align-items:center;
     position:sticky; top:88px; z-index:118;
     max-height:160px; overflow-y:auto;
@@ -78,7 +78,7 @@
   .col-lbl {
     display:inline-flex; align-items:center; gap:4px;
     padding:3px 9px; border:1px solid #b5cef5; border-radius:12px;
-    background:#f0f6ff; cursor:pointer; font-size:11px; white-space:nowrap; user-select:none;
+    cursor:pointer; font-size:11px; white-space:nowrap; user-select:none;
   }
   .col-lbl:hover { background:#d4e5f9; }
   .col-lbl input { cursor:pointer; margin:0; }
@@ -111,12 +111,12 @@
     vertical-align:middle; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     box-sizing:border-box;
   }
-  #dataTable tbody td.rn { color:#aaa; font-size:11px; text-align:right; background:#f8fafd; min-width:32px; }
+  #dataTable tbody td.rn { color:#aaa; font-size:11px; text-align:right; min-width:32px; }
 
   /* フィルター＋ソートポップアップ */
   #filterPopup {
     display:none; position:fixed; z-index:300;
-    background:#fff; border:1px solid #b5cef5; border-radius:6px;
+    border:1px solid #b5cef5; border-radius:6px;
     box-shadow:0 4px 16px rgba(0,0,0,0.22); padding:12px 14px;
     min-width:210px; max-width:270px;
   }
@@ -128,7 +128,7 @@
   .fp-row { display:flex; gap:5px; margin-bottom:8px; }
   .fp-row button {
     flex:1; padding:4px 0; font-size:11px;
-    border:1px solid #a0b8d8; border-radius:3px; background:#fff;
+    border:1px solid #a0b8d8; border-radius:3px;
     cursor:pointer; font-family:inherit;
   }
   .fp-row button:hover { background:#d4e5f9; }
@@ -162,13 +162,13 @@
   }
   #saveDialog.active { display:flex; }
   #saveDialogBox {
-    background:#fff; border-radius:12px; padding:22px 22px 18px;
+    border-radius:12px; padding:22px 22px 18px;
     width:calc(100% - 40px); max-width:340px;
     box-shadow:0 8px 32px rgba(0,0,0,0.28);
   }
   #saveDialogBox h3 { font-size:15px; color:#1a6eb5; margin-bottom:6px; }
   #saveDialogFilename {
-    font-size:11px; color:#666; background:#f4f7fb;
+    font-size:11px; color:#666;
     border:1px solid #dde8f5; border-radius:4px;
     padding:6px 10px; margin:10px 0 16px; word-break:break-all;
   }
@@ -179,7 +179,7 @@
   }
   #sdlgOverwrite { background:#1a6eb5; color:#fff; }
   #sdlgOverwrite:hover { background:#1558a0; }
-  #sdlgSaveAs { background:#e8f0fb; color:#1a6eb5; border:1px solid #b5cef5; }
+  #sdlgSaveAs { color:#1a6eb5; border:1px solid #b5cef5; }
   #sdlgSaveAs:hover { background:#d4e5f9; }
   #sdlgCancel { background:none; color:#888; font-size:12px; margin-bottom:0; }
   #sdlgNewName {
@@ -200,7 +200,7 @@
   /* トースト */
   #toast {
     position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:#1a6eb5; color:#fff; padding:8px 18px;
+    padding:8px 18px;
     border-radius:20px; font-size:13px; display:none; z-index:400;
     box-shadow:0 2px 8px rgba(0,0,0,0.3);
   }
@@ -213,7 +213,7 @@
   #hist-overlay.show { display:block; }
   #hist-panel {
     position:fixed; top:44px; right:-105%; width:min(340px,92vw);
-    height:calc(100dvh - 44px); background:#fff; z-index:700;
+    height:calc(100dvh - 44px); z-index:700;
     box-shadow:-4px 0 24px rgba(0,0,0,0.2);
     transition:right 0.25s ease;
     display:flex; flex-direction:column;
@@ -221,7 +221,6 @@
   }
   #hist-panel.open { right:0; }
   #hist-panel-hdr {
-    background:linear-gradient(135deg,#1e40af,#2563eb); color:#fff;
     padding:12px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0;
   }
   #hist-panel-hdr span { flex:1; font-size:14px; font-weight:700; }
@@ -231,7 +230,6 @@
   }
   #hist-save-btn {
     margin:10px 12px 8px; padding:10px 0;
-    background:linear-gradient(135deg,#1a6eb5,#2563eb);
     color:#fff; border:none; border-radius:9px;
     font-size:13px; font-weight:700; font-family:inherit; cursor:pointer;
     flex-shrink:0; transition:opacity 0.15s;
@@ -241,7 +239,7 @@
   #hist-list { overflow-y:auto; flex:1; padding:0 10px 10px; -webkit-overflow-scrolling:touch; }
   .hist-item {
     display:flex; align-items:center; gap:8px; padding:9px 10px;
-    background:#f0f6ff; border:1px solid #c7daf5; border-radius:8px;
+    border:1px solid #c7daf5; border-radius:8px;
     margin-bottom:6px; cursor:pointer; transition:background 0.15s;
   }
   .hist-item:active { background:#dbeafe; }
@@ -270,7 +268,7 @@
 
 <div id="toolbar">
   <div id="toolbar-inner">
-    <label class="tb-btn" for="localFileInput" style="background:#1a6eb5;color:#fff;border-color:#1558a0;cursor:pointer;">📂 ファイルを開く</label>
+    <label class="tb-btn" for="localFileInput" style="cursor:pointer;">📂 ファイルを開く</label>
     <input type="file" id="localFileInput" accept=".xlsx,.xls" style="display:none;">
     <select id="gitFileSelector"><option value="">⏳ 取得中…</option></select>
     <select id="sheetSelector" title="シートを選択" disabled><option value="">― シート ―</option></select>
