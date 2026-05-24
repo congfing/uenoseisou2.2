@@ -12,14 +12,12 @@ body {
   height: 100%; overflow: hidden;
   display: flex; flex-direction: column;
   font-family: 'Hiragino Sans', 'ヒラギノ角ゴ ProN', 'Meiryo', sans-serif;
-  background: #f0f4f8; color: #222;
   -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== HEADER ===== */
 #app-header {
-  background: linear-gradient(135deg, #1a3a6b 0%, #2563a8 100%);
-  color: #fff; height: 44px;
+  height: 44px;
   display: flex; align-items: center; gap: 8px; padding: 0 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.25); flex-shrink: 0;
 }
@@ -27,10 +25,7 @@ body {
 #file-label { font-size: 10px; opacity: 0.65; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
 
 /* ===== TOOL PANEL ===== */
-#tool-panel {
-  background: linear-gradient(135deg, #152f5a 0%, #1e4f8a 100%);
-  flex-shrink: 0;
-}
+#tool-panel { flex-shrink: 0; }
 #tool-panel-inner {
   display: flex; align-items: center; gap: 8px;
   padding: 7px 12px;
@@ -38,67 +33,59 @@ body {
 #tool-panel.collapsed #tool-panel-inner { display: none; }
 
 #open-btn, #gh-btn {
-  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.4);
-  color: #fff; padding: 6px 13px; border-radius: 7px; font-size: 12px;
+  border: 1px solid; padding: 6px 13px; border-radius: 7px; font-size: 12px;
   cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
-  transition: background 0.15s;
+  transition: opacity 0.15s;
 }
-#open-btn:active, #gh-btn:active { background: rgba(255,255,255,0.35); }
 #gh-btn:disabled { opacity: 0.5; cursor: default; }
 #save-btn {
-  background: rgba(52,211,153,0.25); border: 1px solid rgba(52,211,153,0.6);
-  color: #6ee7b7; padding: 6px 11px; border-radius: 7px; font-size: 12px;
+  border: 1px solid; padding: 6px 11px; border-radius: 7px; font-size: 12px;
   cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0;
-  transition: background 0.15s;
 }
-#save-btn:active { background: rgba(52,211,153,0.4); }
 #save-btn:disabled { opacity: 0.6; cursor: default; }
 
-/* ===== TOOLBAR TOGGLE（他ソフト統一デザイン）===== */
+/* ===== TOOLBAR TOGGLE ===== */
 #toolbar-toggle {
   display: flex; align-items: center; justify-content: center;
   width: 100%; padding: 2px 0;
-  background: #d4e5f9; border: none; border-top: 1px solid #b5cef5;
-  cursor: pointer; font-size: 10px; color: #4a6fa5;
-  font-family: inherit; transition: background 0.15s;
+  border: none; border-top: 1px solid;
+  cursor: pointer; font-size: 10px;
+  font-family: inherit;
 }
-#toolbar-toggle:active { background: #bdd6f5; }
 #tool-panel.collapsed #toolbar-toggle { border-top: none; padding: 4px 0; }
 
 /* ===== GITHUB FILE DROPDOWN ===== */
 #gh-dropdown {
   display: none; position: fixed;
-  background: #fff; border: 1px solid #b5cef5;
+  border: 1px solid;
   border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,0.2);
   z-index: 1000; min-width: 270px; overflow: hidden;
 }
 #gh-dropdown.open { display: block; }
 #gh-dropdown-title {
-  font-size: 11px; color: #1a3a6b; font-weight: 700;
-  padding: 8px 12px 6px; border-bottom: 1px solid #e0eaf5;
-  background: #f0f5ff;
+  font-size: 11px; font-weight: 700;
+  padding: 8px 12px 6px; border-bottom: 1px solid;
 }
 .gh-file-item {
   display: block; width: 100%; text-align: left;
   padding: 9px 14px; font-size: 12px; font-family: inherit;
-  background: none; border: none; cursor: pointer; color: #222;
-  border-bottom: 1px solid #f0f4f8;
+  background: none; border: none; cursor: pointer;
+  border-bottom: 1px solid;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .gh-file-item:last-child { border-bottom: none; }
-.gh-file-item:hover { background: #e8f0fb; color: #1a3a6b; }
 
 /* ===== PATH BAR ===== */
 #path-bar {
-  font-size: 10px; color: #4a6080; padding: 3px 10px;
-  background: #eaf1fb; border-bottom: 1px solid #c8daf5;
+  font-size: 10px; padding: 3px 10px;
+  border-bottom: 1px solid;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   flex-shrink: 0; display: none;
 }
 
 /* ===== SHEET TABS ===== */
 #sheet-tabs {
-  background: #e8f0fb; border-bottom: 1px solid #b5cef5;
+  border-bottom: 1px solid;
   padding: 7px 10px; overflow-x: auto; white-space: nowrap;
   -webkit-overflow-scrolling: touch; scrollbar-width: none;
   min-height: 40px; flex-shrink: 0;
@@ -106,12 +93,11 @@ body {
 #sheet-tabs::-webkit-scrollbar { display: none; }
 .sheet-btn {
   display: inline-block; padding: 5px 13px; margin-right: 6px;
-  background: rgba(255,255,255,0.8); border: 1.5px solid #b5cef5;
+  border: 1.5px solid;
   border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
-  color: #1a3a6b; white-space: nowrap; font-family: inherit;
+  white-space: nowrap; font-family: inherit;
 }
-.sheet-btn.active { background: #2563a8; border-color: #2563a8; color: #fff; }
-.sheet-btn:not(.active):active { background: #d0e2ff; }
+.sheet-btn.active { font-weight: 700; }
 
 /* ===== SCROLL AREA ===== */
 #cal-wrap {
@@ -122,42 +108,37 @@ body {
 /* ===== STATUS ===== */
 #status {
   text-align: center; padding: 60px 20px;
-  color: #666; font-size: 14px; line-height: 2;
+  font-size: 14px; line-height: 2;
 }
 
 /* ===== CALENDAR ===== */
 .cal-title {
-  font-size: 13px; font-weight: 700; color: #1a3a6b;
-  background: linear-gradient(135deg, #1e3a6e, #2563a8);
-  color: #fff; padding: 7px 12px; border-radius: 8px 8px 0 0;
-  margin-top: 4px;
+  font-size: 13px; font-weight: 700;
+  padding: 7px 12px; border-radius: 8px 8px 0 0;
+  margin-top: 4px; border: 1px solid;
 }
 
 .cal-table {
   width: 100%; border-collapse: collapse;
-  background: #fff; border-radius: 0 0 8px 8px;
+  border-radius: 0 0 8px 8px;
   overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.1);
   margin-bottom: 18px;
 }
 
 /* Day of week header */
 .th-day {
-  background: #e8eef8; color: #1e3a6e;
   font-size: 11px; font-weight: 700; text-align: center;
-  padding: 4px 2px; border-right: 1px solid #d0daf0; width: calc(100%/7);
+  padding: 4px 2px; border-right: 1px solid; width: calc(100%/7);
 }
-.th-day.sat { background: #e0eaff; color: #3b5998; }
-.th-day.sun { background: #fee2e2; color: #b91c1c; }
+.th-day.sat { color: #3b5998; }
+.th-day.sun { color: #b91c1c; }
 
 /* Week row */
 .week-row td {
-  vertical-align: top; border: 1px solid #e5eaf5;
+  vertical-align: top; border: 1px solid;
   padding: 3px 3px 4px; width: calc(100%/7);
   min-height: 52px;
 }
-.week-row td.sat { background: #f0f5ff; }
-.week-row td.sun { background: #fff5f5; }
-.week-row td.empty { background: #fafafa; }
 
 .day-head {
   display: flex; align-items: center; gap: 4px;
@@ -166,15 +147,16 @@ body {
 }
 .daynum {
   display: inline-block; font-size: 12px; font-weight: 700;
-  background: #4b72b8; color: #fff;
-  border-radius: 4px; padding: 1px 4px;
+  border: 1.5px solid; border-radius: 4px; padding: 1px 4px;
   line-height: 1.4; min-width: 20px; text-align: center;
   flex: 0 0 auto;
+  background: transparent !important;
 }
-.week-row td.sat .daynum { background: #5b7dc8; }
-.week-row td.sun .daynum { background: #dc2626; }
+.week-row td.sat .daynum { color: #3b5998; }
+.week-row td.sun .daynum { color: #b91c1c; }
 .week-row td.today .daynum {
-  background: #f59e0b; border-radius: 50%;
+  background: #f59e0b !important; color: #fff !important;
+  border-radius: 50%; border-color: #f59e0b !important;
   width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
   font-size: 13px; box-shadow: 0 0 0 3px #fde68a;
 }
@@ -189,94 +171,17 @@ body {
 }
 
 .day-content {
-  font-size: 9px; line-height: 1.5; color: #222;
+  font-size: 9px; line-height: 1.5;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   display: block;
 }
-.day-content.holiday-line {
-  color: #b91c1c; font-weight: 700;
-}
+.day-content.holiday-line { color: #b91c1c; font-weight: 700; }
 .holiday-badge {
   font-size: 8px; font-weight: 700; color: #fff;
   background: #dc2626; border-radius: 3px; padding: 1px 3px;
   display: inline-block; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
-
-  /* === v2.2 unified design === */
-  * { box-sizing: border-box; }
-  body { background: #fff !important; color: #000 !important; }
-  * { color: #000 !important; }
-
-  /* 背景を白に */
-  body, html, main, .screen, .panel, .card, .prop-card, section,
-  .container, .content, header, .header, #app-header, nav,
-  .topbar, .toolbar, #toolbar, #toolbar-inner, #toolbar-toggle,
-  .tool-panel, .staff-list, .staff-item, .prop-card-body,
-  .continue-panel, #colPanel, .col-lbl, #filterPopup, #saveDialogBox,
-  #hist-panel, .history-item, .hist-item, .section-title,
-  .count-badge, .nav-tab, .nav-tabs, .day-save-single,
-  #dataTable thead th, #dataTable tbody tr,
-  #dataTable tbody tr:nth-child(even), #dataTable tbody tr:hover,
-  .gh-file-item, .tool-toggle, .sheet-btn, .fp-row button,
-  .btn, .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger,
-  .toolbar-btn, .tb-btn, .back-btn, .view-btn, .add-tab-btn,
-  .col-lbl.on, .day-dot, .day-dot.today,
-  .staff-item.selected, .prop-card.done {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-  }
-
-  /* 枠線 + 角丸 */
-  table, th, td, input, select, button, textarea,
-  .btn, .toolbar-btn, .tb-btn, .back-btn, .nav-tab, .view-btn,
-  .prop-card, .staff-item, .day-save-single,
-  #dataTable th, #dataTable td,
-  #filterPopup, #saveDialogBox, .col-lbl,
-  header, .topbar, .toolbar, #toolbar, .tool-panel,
-  .history-item, .hist-item, .sheet-btn {
-    border: 1px solid #000 !important;
-    border-color: #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* カード・セクションタイトル */
-  .card, .section-title {
-    border: 1px solid #000 !important;
-    border-radius: 12px !important;
-  }
-
-  /* 入力フォーム */
-  input[type=text], input[type=number], input[type=date],
-  select, textarea {
-    color: #000 !important;
-    background: #fff !important;
-    border: 1px solid #000 !important;
-    border-radius: 8px !important;
-  }
-
-  /* v2.2 thead fix */
-  #dataTable thead tr th,
-  #dataTable thead tr th.col-ctrl,
-  #dataTable thead tr th:hover,
-  #dataTable thead tr th.col-ctrl:hover {
-    background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
-    border-radius: 0 !important;
-  }
-
-  /* カード文字色補完 */
-  .card, .card *, .screen-content, .section-sub,
-  .fields-label, .fields-group, .setting-section {
-    color: #000 !important;
-    border-color: #000 !important;
-  }
-
 </style>
 </head>
 <body>
@@ -310,7 +215,7 @@ body {
 <script>
 // ===== GitHubファイルリスト（ファイルを追加する場合はここに追記）=====
 // リポジトリ: https://github.com/congfing/uenoseisou2.1
-const GH_BASE = 'https://raw.githubusercontent.com/congfing/uenoseisou2.1/main/';
+const GH_BASE = 'https://raw.githubusercontent.com/congfing/uenoseisou2.2/main/';
 const GITHUB_FILES = [
   { name: '収集カレンダー_令和8年度(祝日いり)_v11.xlsx',
     url:  GH_BASE + encodeURIComponent('収集カレンダー_令和8年度(祝日いり)_v11.xlsx') },
@@ -638,7 +543,7 @@ async function renderSheet(name) {
         dayHead.className = 'day-head';
         const numEl = document.createElement('div');
         numEl.className = 'daynum';
-        if (holidayName) numEl.style.background = '#dc2626';
+        if (holidayName) { numEl.style.color = '#dc2626'; numEl.style.borderColor = '#dc2626'; }
         numEl.textContent = dateVal;
         dayHead.appendChild(numEl);
 
