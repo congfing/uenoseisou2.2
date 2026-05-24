@@ -568,7 +568,15 @@ function getCellDisplayAlign(cell, r, c) {
   if (ov) return ov;
   const h = cell?.s?.alignment?.horizontal;
   if (h === 'center' || h === 'right' || h === 'left') return h;
-  return (cell && typeof cell.v === 'number') ? 'right' : null;
+  if (!cell) return null;
+  // 数値は右寄せ
+  if (typeof cell.v === 'number') return 'right';
+  // 祝日セル「憲法記念日 3」のように末尾がスペース＋日付数字（1〜31）の文字列も右寄せ
+  if (typeof cell.v === 'string') {
+    const m = cell.v.match(/[\s　](\d{1,2})$/);
+    if (m && parseInt(m[1], 10) <= 31) return 'right';
+  }
+  return null;
 }
 
 function updateAlignBtns(align) {
