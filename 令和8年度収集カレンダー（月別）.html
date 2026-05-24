@@ -12,7 +12,8 @@ body { font-family:'Meiryo','メイリオ','Hiragino Kaku Gothic ProN',sans-seri
 table { border-collapse:collapse; width:700px; min-width:700px; table-layout:fixed; }
 th { text-align:center; font-size:11px; padding:4px; border:1px solid #b0b0b0; }
 th.sat { color:#2E75B6; } th.sun { color:#CC0000; }
-.date-cell { text-align:left; vertical-align:top; padding:4px 5px 2px 4px;
+.date-cell { display:flex; flex-direction:row-reverse; justify-content:flex-start; align-items:flex-start;
+             gap:3px; padding:4px 5px 2px 4px;
              font-size:13px; font-weight:bold; border:1px solid #b0b0b0;
              border-bottom:1px dotted #ccc; height:38px;
              background:transparent!important; background-color:transparent!important; }
@@ -20,7 +21,7 @@ th.sat { color:#2E75B6; } th.sun { color:#CC0000; }
             padding:1px 4px; min-width:22px; text-align:center; line-height:1.5;
             font-size:13px; font-weight:bold;
             background:transparent!important; background-color:transparent!important; }
-.hol-name { font-size:8px; font-weight:normal; display:block; margin-top:2px; }
+.hol-name { font-size:8px; font-weight:normal; display:inline; margin:0; align-self:center; }
 .ev-cell { text-align:left; vertical-align:top;
            border:1px solid #b0b0b0; border-top:1px dotted #ccc;
            padding:4px 4px; font-size:9.5px; line-height:1.7; }

@@ -75,6 +75,7 @@ body {
 .gh-file-item:last-child { border-bottom: none; }
 .gh-file-item:hover { opacity: 0.75; }
 .gh-status { padding: 12px 14px; font-size: 12px; opacity: 0.6; }
+.gh-section-title { padding: 6px 14px 4px; font-size: 10px; font-weight: 700; opacity: 0.5; border-bottom: 1px solid; }
 #gh-modal-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
 #gh-modal-footer button { padding: 6px 16px; border: 1px solid; border-radius: 7px; font: inherit; font-size: 12px; cursor: pointer; }
 
@@ -300,6 +301,7 @@ let _isDragging = false;
 const _selEls   = new Map();   // "r:c" → el 選択中の要素
 const _cellEls  = new Map();   // "r:c" → el 描画済み全セル
 const _alignments = new Map(); // "sheet:r:c" → 'left'|'center'|'right'
+let _recentFiles = [];         // IndexedDB から読み込んだ最近のファイル
 
 // ===== GitHub dropdown =====
 // ===== ツールパネル =====
@@ -321,6 +323,7 @@ async function openGhModal() {
   document.getElementById('gh-modal').classList.add('open');
   document.getElementById('gh-search').value = '';
   _ghFiles = [...GITHUB_FILES];
+  _recentFiles = await getRecentFiles();
   renderGhFiles('');
   try {
     const res = await fetch(GH_API);
@@ -339,24 +342,93 @@ async function openGhModal() {
 function renderGhFiles(query) {
   const list = document.getElementById('gh-file-list');
   const q = query.trim().toLowerCase();
-  const filtered = q ? _ghFiles.filter(f => f.name.toLowerCase().includes(q)) : _ghFiles;
-  if (!filtered.length) {
-    list.innerHTML = '<div class="gh-status">ファイルが見つかりません</div>';
-    return;
-  }
   list.innerHTML = '';
-  filtered.forEach(f => {
-    const btn = document.createElement('button');
-    btn.className = 'gh-file-item'; btn.textContent = f.name;
-    btn.onclick = () => { closeGhModal(); loadFromGitHub(f, 0); };
-    list.appendChild(btn);
-  });
+
+  // 最近のファイルセクション
+  const filteredRecent = _recentFiles.filter(f => !q || f.name.toLowerCase().includes(q));
+  if (filteredRecent.length) {
+    const title = document.createElement('div');
+    title.className = 'gh-section-title'; title.textContent = '最近のファイル';
+    list.appendChild(title);
+    filteredRecent.forEach(f => {
+      const btn = document.createElement('button');
+      btn.className = 'gh-file-item'; btn.textContent = '💾 ' + f.name;
+      btn.onclick = () => loadFromRecent(f);
+      list.appendChild(btn);
+    });
+  }
+
+  // GitHubセクション
+  const filteredGh = q ? _ghFiles.filter(f => f.name.toLowerCase().includes(q)) : _ghFiles;
+  if (filteredGh.length) {
+    const title = document.createElement('div');
+    title.className = 'gh-section-title'; title.textContent = 'GitHubのファイル';
+    list.appendChild(title);
+    filteredGh.forEach(f => {
+      const btn = document.createElement('button');
+      btn.className = 'gh-file-item'; btn.textContent = '☁️ ' + f.name;
+      btn.onclick = () => { closeGhModal(); loadFromGitHub(f, 0); };
+      list.appendChild(btn);
+    });
+  }
+
+  if (!filteredRecent.length && !filteredGh.length) {
+    list.innerHTML = '<div class="gh-status">ファイルが見つかりません</div>';
+  }
 }
 
 function closeGhModal() { document.getElementById('gh-modal').classList.remove('open'); }
 document.getElementById('gh-modal').addEventListener('click', e => {
   if (e.target.id === 'gh-modal') closeGhModal();
 });
+
+// ===== IndexedDB（最近のファイル）=====
+const DB_NAME = 'excel-viewer-db';
+const DB_VER  = 1;
+const STORE   = 'recent-files';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        db.createObjectStore(STORE, { keyPath: 'name' });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function saveRecent(name, buf) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put({ name, data: new Uint8Array(buf), savedAt: Date.now() });
+  } catch(e) { /* ignore */ }
+}
+
+async function getRecentFiles() {
+  try {
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const tx  = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result.sort((a, b) => b.savedAt - a.savedAt));
+      req.onerror   = () => reject(req.error);
+    });
+  } catch(e) { return []; }
+}
+
+function loadFromRecent(file) {
+  closeGhModal();
+  _filename = file.name;
+  document.getElementById('file-label').textContent = file.name;
+  setPathBar('💾 ' + file.name, '');
+  closeToolPanel();
+  loadWorkbook(file.data.buffer);
+}
 async function loadFromGitHub(file, idx) {
   const btn = document.getElementById('gh-btn'); btn.disabled = true;
   try {
@@ -776,14 +848,24 @@ function renderGrid(ws, sR, sC, eR, eC) {
 // ===== 保存 =====
 function saveFile() {
   if (!workbook) return;
+  const name = _filename || 'download.xlsx';
   const buf = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
-  download(buf, _filename || 'download.xlsx');
+  download(buf, name);
+  saveRecent(name, buf);
 }
 function download(data, filename) {
   const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url  = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+  // ツールバーを確実に維持
+  setTimeout(() => {
+    document.getElementById('tool-panel').classList.remove('collapsed');
+    document.getElementById('toolbar-toggle').textContent = '▲ 閉じる';
+  }, 50);
 }
 
 // ===== 別名保存 =====
@@ -806,10 +888,12 @@ function updatePreview() {
   document.getElementById('saveas-preview').textContent = '→ ' + name + ts + '.xlsx';
 }
 function executeSaveAs() {
-  const name = (document.getElementById('saveas-name').value.trim() || 'download');
-  const ts   = document.getElementById('saveas-ts').checked ? '_' + getTimestamp() : '';
-  const buf  = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
-  download(buf, name + ts + '.xlsx');
+  const name  = (document.getElementById('saveas-name').value.trim() || 'download');
+  const ts    = document.getElementById('saveas-ts').checked ? '_' + getTimestamp() : '';
+  const fname = name + ts + '.xlsx';
+  const buf   = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+  download(buf, fname);
+  saveRecent(fname, buf);
   closeSaveAs();
 }
 document.getElementById('saveas-overlay').addEventListener('click', e => { if (e.target.id === 'saveas-overlay') closeSaveAs(); });
