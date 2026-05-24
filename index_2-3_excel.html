@@ -106,7 +106,7 @@ body {
 
 /* ===== TABLE 共通 ===== */
 .xl-table {
-  border-collapse: collapse; font-size: 11px; white-space: nowrap; width: 100%;
+  border-collapse: collapse; font-size: 11px; white-space: nowrap;
 }
 .xl-table th, .xl-table td {
   border: 1px solid; padding: 3px 8px;
@@ -194,7 +194,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
   <div id="file-label">ファイルを選択…</div>
 </div>
 
-<div id="tool-panel" class="collapsed">
+<div id="tool-panel">
   <div id="tool-panel-inner">
     <button class="tool-btn" onclick="document.getElementById('file-input').click()">📂 開く</button>
     <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none">
@@ -208,7 +208,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
     <button class="tool-btn" id="save-btn"   onclick="saveFile()"   disabled>💾 保存</button>
     <button class="tool-btn" id="saveas-btn" onclick="openSaveAs()" disabled>📝 別名保存</button>
   </div>
-  <button id="toolbar-toggle" onclick="toggleToolPanel()">▼ ツール</button>
+  <button id="toolbar-toggle" onclick="toggleToolPanel()">▲ 閉じる</button>
 </div>
 
 <div id="gh-dropdown">
@@ -378,6 +378,24 @@ function toggleEdit() {
   btn.classList.toggle('active', _editMode);
 }
 
+// ===== Excelの列幅からcolgroup生成 =====
+function buildColgroup(ws, sC, eC, hasRowNum) {
+  const cols = ws['!cols'] || [];
+  const cg = document.createElement('colgroup');
+  if (hasRowNum) {
+    const c = document.createElement('col'); c.style.width = '38px'; cg.appendChild(c);
+  }
+  for (let ci = sC; ci <= eC; ci++) {
+    const info = cols[ci];
+    const col = document.createElement('col');
+    if (info && (info.wpx || info.wch)) {
+      col.style.width = Math.max(40, info.wpx || Math.round((info.wch || 8) * 7 + 8)) + 'px';
+    }
+    cg.appendChild(col);
+  }
+  return cg;
+}
+
 // ===== 列記号 =====
 function colLetter(n) {
   let s = ''; n++;
@@ -478,8 +496,12 @@ function showZone(mode) {
 function renderList(ws, sR, sC, eR, eC) {
   showZone('list');
 
-  // ヘッダー（sR行目）
   const hTbl = document.getElementById('list-header-table');
+  const bTbl = document.getElementById('list-body-table');
+  hTbl.appendChild(buildColgroup(ws, sC, eC, false));
+  bTbl.appendChild(buildColgroup(ws, sC, eC, false));
+
+  // ヘッダー（sR行目）
   const hThead = hTbl.createTHead();
   const hTr    = hThead.insertRow();
   for (let c = sC; c <= eC; c++) {
@@ -492,7 +514,6 @@ function renderList(ws, sR, sC, eR, eC) {
   }
 
   // ボディ（sR+1 以降）
-  const bTbl  = document.getElementById('list-body-table');
   const bTbody = bTbl.createTBody();
   for (let r = sR + 1; r <= eR; r++) {
     const tr = bTbody.insertRow();
@@ -527,7 +548,8 @@ function syncColWidths(headerTbl, bodyTbl) {
 // ===== グリッドビュー =====
 function renderGrid(ws, sR, sC, eR, eC) {
   showZone('grid');
-  const tbl   = document.getElementById('grid-table');
+  const tbl = document.getElementById('grid-table');
+  tbl.appendChild(buildColgroup(ws, sC, eC, true));
   const thead = tbl.createTHead();
   const htr   = thead.insertRow();
 
