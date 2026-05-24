@@ -772,6 +772,18 @@ function executeSaveAs() {
 }
 document.getElementById('saveas-overlay').addEventListener('click', e => { if (e.target.id === 'saveas-overlay') closeSaveAs(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSaveAs(); });
+
+// ===== URLパラメータで自動読み込み =====
+// ?gh=0  → GITHUB_FILES[0] を自動ロード
+// ?gh=1  → GITHUB_FILES[1] を自動ロード
+(function() {
+  const p = new URLSearchParams(location.search);
+  const gh = p.get('gh');
+  if (gh === null) return;
+  const idx = parseInt(gh);
+  if (isNaN(idx) || idx < 0 || idx >= GITHUB_FILES.length) return;
+  loadFromGitHub(GITHUB_FILES[idx], idx);
+})();
 </script>
 </body>
 </html>
