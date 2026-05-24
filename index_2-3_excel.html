@@ -210,7 +210,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
     <button class="tool-btn" id="align-c-btn" onclick="applyAlign('center')" title="中央">≡C</button>
     <button class="tool-btn" id="align-r-btn" onclick="applyAlign('right')"  title="右寄せ">≡R</button>
     <span class="tool-sep">|</span>
-    <button class="tool-btn" id="addrow-btn" onclick="addRow()" disabled>＋ 行追加</button>
+    <button class="tool-btn" id="addrow-btn" onclick="addRow()" disabled title="選択行の上に挿入（未選択なら末尾）">＋ 行追加</button>
     <span class="tool-sep">|</span>
     <button class="tool-btn" id="save-btn"   onclick="saveFile()"   disabled>💾 保存</button>
     <button class="tool-btn" id="saveas-btn" onclick="openSaveAs()" disabled>📝 別名保存</button>
@@ -472,12 +472,46 @@ function applyAlign(align) {
   updateAlignBtns(align);
 }
 
-// ===== 行追加 =====
+// ===== 行追加（選択行の上に挿入、未選択なら末尾） =====
 function addRow() {
   if (!workbook || !_currentSheet) return;
   const ws = workbook.Sheets[_currentSheet];
   if (!ws['!ref']) ws['!ref'] = 'A1:A1';
   const rng = XLSX.utils.decode_range(ws['!ref']);
+  const insertAt = _selectedCell ? _selectedCell.r : rng.e.r + 1;
+
+  // 挿入行以降のセルを降順で1行下にシフト（競合防止）
+  const cellKeys = Object.keys(ws)
+    .filter(k => !k.startsWith('!'))
+    .sort((a, b) => XLSX.utils.decode_cell(b).r - XLSX.utils.decode_cell(a).r);
+  for (const addr of cellKeys) {
+    const ref = XLSX.utils.decode_cell(addr);
+    if (ref.r >= insertAt) {
+      ws[XLSX.utils.encode_cell({ r: ref.r + 1, c: ref.c })] = ws[addr];
+      delete ws[addr];
+    }
+  }
+
+  // !rows も1行シフト
+  if (ws['!rows']) {
+    ws['!rows'] = [
+      ...ws['!rows'].slice(0, insertAt),
+      null,
+      ...ws['!rows'].slice(insertAt)
+    ];
+  }
+
+  // アライメントのキーをシフト
+  for (const [key, val] of [..._alignments.entries()]) {
+    const parts = key.split(':');
+    const r = parseInt(parts[parts.length - 2]);
+    if (r >= insertAt) {
+      _alignments.delete(key);
+      parts[parts.length - 2] = String(r + 1);
+      _alignments.set(parts.join(':'), val);
+    }
+  }
+
   rng.e.r++;
   ws['!ref'] = XLSX.utils.encode_range(rng);
   _selectedCell = null;
