@@ -1101,7 +1101,7 @@ function applyNavColorsToDocument(doc,nc){
   if(!doc||!doc.body)return;
   const tc=getTapColors();
   // 非アクティブ: ナビ背景
-  const selAll=['.header','.nav-tabs','.header-top','.header-left',
+  const selAll=['.header','.nav-tabs','#nav-tabs-bar','.header-top','.header-left',
     '.header-title','.header-date','.back-btn','.count-badge'].join(',');
   doc.querySelectorAll(selAll).forEach(el=>{
     el.style.setProperty('background',nc.bg,'important');
