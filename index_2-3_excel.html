@@ -155,6 +155,7 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
   padding: 2px 7px; font: inherit; background: transparent;
 }
 .cell-modified { font-style: italic; }
+.cell-selected { outline: 2px solid #1a6eb5 !important; outline-offset: -2px; background-color: rgba(26,110,181,0.07) !important; }
 
 /* ===== 別名保存ダイアログ ===== */
 #saveas-overlay {
@@ -204,6 +205,12 @@ body.edit-mode .xl-table th:not(.rn-corner):not(.col-ltr):hover {
     <button class="tool-btn"        id="btn-grid" onclick="setView('grid')">⊞ グリッド</button>
     <span class="tool-sep">|</span>
     <button class="tool-btn" id="edit-btn" onclick="toggleEdit()">✏️ 編集</button>
+    <span class="tool-sep">|</span>
+    <button class="tool-btn" id="align-l-btn" onclick="applyAlign('left')"   title="左寄せ">≡L</button>
+    <button class="tool-btn" id="align-c-btn" onclick="applyAlign('center')" title="中央">≡C</button>
+    <button class="tool-btn" id="align-r-btn" onclick="applyAlign('right')"  title="右寄せ">≡R</button>
+    <span class="tool-sep">|</span>
+    <button class="tool-btn" id="addrow-btn" onclick="addRow()" disabled>＋ 行追加</button>
     <span class="tool-sep">|</span>
     <button class="tool-btn" id="save-btn"   onclick="saveFile()"   disabled>💾 保存</button>
     <button class="tool-btn" id="saveas-btn" onclick="openSaveAs()" disabled>📝 別名保存</button>
@@ -262,6 +269,8 @@ let _currentSheet = null;
 let _filename     = '';
 let _viewMode     = 'list';
 let _editMode     = false;
+let _selectedCell = null;          // { r, c, el }
+const _alignments = new Map();     // key "sheet:r:c" → 'left'|'center'|'right'
 
 // ===== GitHub dropdown =====
 (function() {
@@ -336,10 +345,12 @@ function setPathBar(name, url) {
 // ===== ワークブック読み込み =====
 function loadWorkbook(buf) {
   try {
-    workbook = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true, cellNF: true });
+    workbook = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true, cellNF: true, cellStyles: true });
   } catch(e) { alert('読み込みに失敗しました。\n' + e.message); return; }
   document.getElementById('save-btn').disabled = false;
   document.getElementById('saveas-btn').disabled = false;
+  document.getElementById('addrow-btn').disabled = false;
+  _alignments.clear();
   document.getElementById('status-wrap').style.display = 'none';
 
   const tabsEl = document.getElementById('sheet-tabs');
@@ -427,9 +438,56 @@ function updateCell(r, c, val) {
   ws['!ref'] = XLSX.utils.encode_range(rng);
 }
 
+// ===== セル整列 =====
+function alignKey(r, c) { return `${_currentSheet}:${r}:${c}`; }
+
+function getCellDisplayAlign(cell, r, c) {
+  const ov = _alignments.get(alignKey(r, c));
+  if (ov) return ov;
+  const h = cell?.s?.alignment?.horizontal;
+  if (h === 'center' || h === 'right' || h === 'left') return h;
+  return (cell && typeof cell.v === 'number') ? 'right' : null;
+}
+
+function updateAlignBtns(align) {
+  document.getElementById('align-l-btn').classList.toggle('active', align === 'left');
+  document.getElementById('align-c-btn').classList.toggle('active', align === 'center');
+  document.getElementById('align-r-btn').classList.toggle('active', align === 'right');
+}
+
+function selectCell(el, r, c) {
+  if (_selectedCell && _selectedCell.el !== el) _selectedCell.el.classList.remove('cell-selected');
+  _selectedCell = { r, c, el };
+  el.classList.add('cell-selected');
+  const ws = workbook?.Sheets[_currentSheet];
+  const align = getCellDisplayAlign(ws ? getCellRaw(ws, r, c) : null, r, c) || 'left';
+  updateAlignBtns(align);
+}
+
+function applyAlign(align) {
+  if (!_selectedCell) return;
+  const { r, c, el } = _selectedCell;
+  _alignments.set(alignKey(r, c), align);
+  el.style.textAlign = align;
+  updateAlignBtns(align);
+}
+
+// ===== 行追加 =====
+function addRow() {
+  if (!workbook || !_currentSheet) return;
+  const ws = workbook.Sheets[_currentSheet];
+  if (!ws['!ref']) ws['!ref'] = 'A1:A1';
+  const rng = XLSX.utils.decode_range(ws['!ref']);
+  rng.e.r++;
+  ws['!ref'] = XLSX.utils.encode_range(rng);
+  _selectedCell = null;
+  renderSheet(_currentSheet);
+}
+
 // ===== セル編集 =====
 function attachEdit(el, r, c) {
   el.addEventListener('click', () => {
+    selectCell(el, r, c);
     if (!_editMode || el.classList.contains('cell-editing')) return;
     const ws = workbook.Sheets[_currentSheet];
     const old = getCellText(ws, r, c);
@@ -464,6 +522,7 @@ function attachEdit(el, r, c) {
 function renderSheet(name) {
   if (!workbook) return;
   const ws = workbook.Sheets[name];
+  _selectedCell = null;
 
   // 各テーブルをリセット
   ['list-header-table','list-body-table','grid-table'].forEach(id => {
@@ -522,7 +581,8 @@ function renderList(ws, sR, sC, eR, eC) {
       const cell = getCellRaw(ws, r, c);
       const v    = getCellText(ws, r, c);
       td.textContent = v; if (v) td.title = v;
-      if (cell && typeof cell.v === 'number') td.classList.add('num');
+      const align = getCellDisplayAlign(cell, r, c);
+      if (align) td.style.textAlign = align;
       attachEdit(td, r, c);
     }
   }
@@ -576,7 +636,8 @@ function renderGrid(ws, sR, sC, eR, eC) {
       const cell = getCellRaw(ws, r, c);
       const v    = getCellText(ws, r, c);
       td.textContent = v; if (v) td.title = v;
-      if (cell && typeof cell.v === 'number') td.classList.add('num');
+      const align = getCellDisplayAlign(cell, r, c);
+      if (align) td.style.textAlign = align;
       attachEdit(td, r, c);
     }
   }
