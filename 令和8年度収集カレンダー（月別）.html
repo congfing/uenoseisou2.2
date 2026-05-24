@@ -6,41 +6,40 @@
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:'Meiryo','メイリオ','Hiragino Kaku Gothic ProN',sans-serif;
        background:#f5f5f5; font-size:11px; }
-.cal-title { background:#1F497D; color:#fff; text-align:center;
-             padding:10px; font-size:17px; font-weight:bold; }
+.cal-title { text-align:center; padding:10px; font-size:17px; font-weight:bold; }
 .month-block { padding:8px; }
-.month-title { background:#2E75B6; color:#fff; padding:6px 10px;
-               font-size:14px; font-weight:bold; border-radius:3px; margin-bottom:4px; }
+.month-title { padding:6px 10px; font-size:14px; font-weight:bold;
+               border-radius:3px; margin-bottom:4px; border:1px solid; }
 table { border-collapse:collapse; width:700px; min-width:700px; table-layout:fixed; }
-th { background:#f2f2f2; text-align:center; font-size:11px;
-     padding:4px; border:1px solid #b0b0b0; }
+th { text-align:center; font-size:11px; padding:4px; border:1px solid #b0b0b0; }
 th.sat { color:#2E75B6; } th.sun { color:#CC0000; }
 
-.date-cell { text-align:left; vertical-align:top; padding:3px 5px 2px 3px;
-             font-size:12px; font-weight:bold; border:1px solid #b0b0b0;
-             border-bottom:1px dotted #ccc; height:32px;
+.date-cell { text-align:left; vertical-align:top; padding:4px 5px 2px 4px;
+             font-size:13px; font-weight:bold; border:1px solid #b0b0b0;
+             border-bottom:1px dotted #ccc; height:38px;
              background:transparent!important; background-color:transparent!important; }
-.date-num { display:inline-block; border:1px solid; border-radius:2px;
-            padding:0 3px; min-width:18px; text-align:center; line-height:1.5;
+.date-num { display:inline-block; border:1.5px solid; border-radius:2px;
+            padding:1px 4px; min-width:22px; text-align:center; line-height:1.5;
+            font-size:13px; font-weight:bold;
             background:transparent!important; background-color:transparent!important; }
 .hol-name { font-size:8px; font-weight:normal; display:block; margin-top:2px; }
 
-.ev-cell { text-align:left; vertical-align:top; background:#fff;
+.ev-cell { text-align:left; vertical-align:top;
            border:1px solid #b0b0b0; border-top:1px dotted #ccc;
            padding:4px 4px; font-size:9.5px; line-height:1.7; }
 
-.sat-bg { background:#DCE6F1; }
+.sat-bg { }
 .sun-bg { background:#FCE4D6; }
 .hol-bg { background:#FFCCCC; }
 .sat-txt { color:#2E75B6; }
 .sun-txt { color:#CC0000; }
 .hol-txt { color:#CC0000; }
-.empty { background:#fff; }
+.empty { }
 
-.tabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#e8e8e8;}
-.tab-btn{padding:6px 12px;border:none;background:#ccc;cursor:pointer;
-          border-radius:4px;font-size:13px;font-family:inherit;}
-.tab-btn.active{background:#1F497D;color:#fff;}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px;}
+.tab-btn{padding:6px 12px;border:none;cursor:pointer;
+          border-radius:4px;font-size:13px;font-family:inherit;border:1px solid;}
+.tab-btn.active{ font-weight:bold; }
 
 </style></head><body>
 <div class="cal-title">令和8年度　一般廃棄物収集カレンダー（月別）</div>
