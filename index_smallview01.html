@@ -420,7 +420,7 @@ const GITHUB_FILES = [
   { title: 'カレンダー編集', href: 'index_2-2_gcal.html' },
   { title: 'カレンダー', href: 'calendar_2026.html' }
 ];
-const GITHUB_HTML_API = 'https://api.github.com/repos/congfing/uenoseisou2.1/contents/';
+const GITHUB_HTML_API = 'https://api.github.com/repos/congfing/uenoseisou2.2/contents/';
 const APP_VERSION = '20260521-smallview01';
 const LOAD_DELAY_MS = 650;
 const STORAGE_KEY = 'ueno21_smallview_custom_windows';
@@ -526,6 +526,16 @@ function createWindow(app) {
     attachFrameObserver(frame);
     setTimeout(applyEffectsToAllWindows, 120);
     setTimeout(applyEffectsToAllWindows, 900);
+    try {
+      const innerDoc = frame.contentDocument;
+      if (innerDoc) {
+        innerDoc.querySelectorAll('iframe').forEach((nested) => {
+          nested.addEventListener('load', () => {
+            setTimeout(applyEffectsToAllWindows, 120);
+          });
+        });
+      }
+    } catch (e) {}
   });
 
   card.appendChild(title);
@@ -745,7 +755,7 @@ function applySoftColorsToDocument(doc, settings) {
   }
 
   if (settings.softTitleBarEnable) {
-    doc.querySelectorAll('#app-header, #hist-panel-hdr, #hist-save-btn, #dataTable thead th, #filterApplyBtn, .col-lbl.on, a.keiryou-link-cell, .app-header, .header, header, .topbar, .page-header, .main-header, .titlebar, .property-header').forEach((el) => {
+    doc.querySelectorAll('#app-header, #hist-panel-hdr, #hist-save-btn, #dataTable thead th, #filterApplyBtn, .col-lbl.on, a.keiryou-link-cell, .app-header, .header, header, .topbar, .page-header, .main-header, .titlebar, .property-header, .cal-title, .month-title').forEach((el) => {
       el.style.setProperty('background-color', settings.softTitleBarColor, 'important');
       el.style.setProperty('background', settings.softTitleBarColor, 'important');
       el.dataset.uenoSoftColor = 'true';
@@ -855,7 +865,14 @@ function forEachWindowDocument(callback) {
   cards.forEach((card) => {
     const frame = card.querySelector('.window-frame');
     try {
-      if (frame && frame.contentDocument) callback(frame.contentDocument);
+      if (frame && frame.contentDocument) {
+        callback(frame.contentDocument);
+        frame.contentDocument.querySelectorAll('iframe').forEach((nested) => {
+          try {
+            if (nested.contentDocument) callback(nested.contentDocument);
+          } catch (e) {}
+        });
+      }
     } catch (error) {}
   });
 }

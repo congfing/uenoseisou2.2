@@ -36,7 +36,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-.hdr-btn.active { background: #1a6eb5; border-color: #0f4a80; color: #fff; }
+.hdr-btn.active { background: #fff; border-color: #b8cce4; color: #000; }
 .hdr-btn.gh { background: #f0f7ff; border-color: #7eb3e0; color: #1a6eb5; }
 
 /* ===== GITHUB MODAL ===== */
@@ -89,8 +89,8 @@ body {
 </head>
 <body>
 
-<div id="header">
-  <span id="brand">収集カレンダー</span>
+<div id="header" class="app-header">
+  <span id="brand">収集カレンダー</span><span style="font-size:10px;color:#999;margin-left:4px;">v3-3</span>
   <button class="hdr-btn active"
     onclick="loadCal(this,'令和8年度収集カレンダー（月別）.html')">月別</button>
   <button class="hdr-btn"
