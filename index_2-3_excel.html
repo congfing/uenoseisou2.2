@@ -563,8 +563,12 @@ function renderGrid(ws, sR, sC, eR, eC) {
   }
 
   const tbody = tbl.createTBody();
+  const rowInfos = ws['!rows'] || [];
   for (let r = sR; r <= eR; r++) {
     const tr = tbody.insertRow();
+    const ri = rowInfos[r];
+    const hpx = ri ? (ri.hpx || (ri.hpt ? Math.round(ri.hpt * 96 / 72) : 0)) : 0;
+    tr.style.height = Math.max(18, hpx) + 'px';
     const rnTd = tr.insertCell();
     rnTd.className = 'rn'; rnTd.textContent = r + 1;
     for (let c = sC; c <= eC; c++) {
