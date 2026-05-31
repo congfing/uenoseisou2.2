@@ -7,31 +7,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { overscroll-behavior-x: contain; font-family: 'Hiragino Sans', 'Meiryo', sans-serif; min-height: 100vh; }
+  body { overscroll-behavior-x: contain; font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f4f8; color: #333; min-height: 100vh; }
 
   /* ===== HEADER ===== */
-  #app-header { padding: 8px 14px; position: sticky; top: 0; z-index: 101; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; min-height: 44px; }
-  #app-header h1 { margin: 0; font-size: 15px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-  #nav-tabs-bar { padding: 0 14px; position: sticky; top: 44px; z-index: 100; }
+  .header { background: #1a6eb5; color: white; padding: 8px 14px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .header-left { display: flex; align-items: center; gap: 8px; }
+  .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 13px; font-weight: bold;
+    cursor: pointer; padding: 5px 10px; border-radius: 8px; display: none; align-items: center; gap: 4px; white-space: nowrap; }
+  .header-date { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
+  .header-title { font-size: 16px; font-weight: bold; }
   .nav-tabs { display: flex; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .nav-tab { flex-shrink: 0; padding: 7px 10px; font-size: 12px; font-weight: bold;
-    border: none; border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .nav-tab.active { }
+    color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.1); border: none;
+    border-radius: 8px 8px 0 0; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .nav-tab.active { background: white; color: #1a6eb5; }
   .nav-tab.disabled { opacity: 0.4; cursor: default; }
 
   /* ===== SCREENS ===== */
   .screen { display: none; padding: 16px; max-width: 500px; margin: 0 auto; }
   .screen.active { display: block; }
-  .card { border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
   /* ===== BUTTONS ===== */
   .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
-  .btn-primary { }
+  .btn-primary { background: #1a6eb5; color: white; }
   .btn-secondary { background: #e2e8f0; color: #444; }
   .btn-success { background: #22c55e; color: white; }
   .btn-warning { background: #f59e0b; color: white; }
   .btn-danger { background: #fee2e2; color: #dc2626; }
-  .btn-enter { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 12px; }
+  .btn-enter { background: #1a6eb5; color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 12px; }
   .btn-sm { padding: 8px 12px; font-size: 13px; border-radius: 8px; display: inline-block; width: auto; }
 
   /* ===== INPUTS ===== */
@@ -42,16 +47,16 @@
 
   /* ===== STAFF ===== */
   .staff-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 12px;
-    border-radius: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    background: white; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
     cursor: pointer; border: 2px solid transparent; }
-  .staff-item.selected { border-color: #1a6eb5; }
+  .staff-item.selected { border-color: #1a6eb5; background: #eff6ff; }
   .staff-check { color: #1a6eb5; font-size: 20px; display: none; }
   .staff-item.selected .staff-check { display: block; }
   .order-saved-badge { display: inline-block; background: #d1fae5; color: #065f46; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
 
 
   /* ===== 曜日保存ボタン ===== */
-  .day-save-single { border-radius: 10px; padding: 8px 12px;
+  .day-save-single { background: white; border-radius: 10px; padding: 8px 12px;
     margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
     border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
   .day-save-single button { flex: 1; padding: 9px 8px; border-radius: 8px;
@@ -62,12 +67,12 @@
   .day-save-single .saved-note { font-size: 11px; color: #10b981; }
 
   /* ===== COMBINED PROPERTY LIST+SETTINGS ===== */
-  .prop-card { border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; border: 2px solid transparent; transition: border-color 0.2s; }
+  .prop-card { background: white; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; border: 2px solid transparent; transition: border-color 0.2s; }
   .prop-card.done { border-color: #22c55e; }
   .prop-card-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; }
   .prop-order-input { width: 40px !important; max-width: 40px !important; min-width: 40px !important;
     padding: 5px 3px; text-align: center; font-size: 15px; font-weight: bold;
-    border: 2px solid #e2e8f0; border-radius: 8px; color: #1a6eb5;
+    border: 2px solid #e2e8f0; border-radius: 8px; background: #f8fafc; color: #1a6eb5;
     flex-shrink: 0; outline: none; }
   .prop-order-input:focus { border-color: #1a6eb5; }
   .prop-seq-num { width: 30px; min-width: 30px; text-align: center; font-size: 15px; font-weight: bold;
@@ -91,7 +96,7 @@
   .prop-status-icon { font-size: 20px; }
   .prop-toggle { color: #aaa; font-size: 14px; }
 
-  .prop-card-body { overscroll-behavior-x: contain; padding: 12px 14px; border-top: 1px solid #f0f0f0; display: none; }
+  .prop-card-body { overscroll-behavior-x: contain; padding: 12px 14px; background: #fafafa; border-top: 1px solid #f0f0f0; display: none; }
   .prop-card-body.open { display: block; }
 
   /* Day checkboxes */
@@ -109,14 +114,14 @@
   .field-name-wrap { flex: 1; position: relative; }
   .field-name-wrap input { padding: 7px; font-size: 14px; border: 1px solid #e2e8f0; border-radius: 6px; width: 100%; outline: none; }
   .field-name-wrap input:focus { border-color: #1a6eb5; }
-  .field-dropdown { position: absolute; top: 100%; left: 0; right: 0;
+  .field-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white;
     border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     z-index: 300; max-height: 180px; overflow-y: auto; display: none; }
   .field-dropdown.open { display: block; }
   .field-dropdown-item { padding: 9px 12px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f5f5f5; }
   .field-dropdown-item:last-child { border-bottom: none; }
   .field-dropdown-item:active { background: #eff6ff; }
-  .field-edit-row select { padding: 7px 4px; font-size: 13px; border: 1px solid #e2e8f0; border-radius: 6px; width: 54px; }
+  .field-edit-row select { padding: 7px 4px; font-size: 13px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; width: 54px; }
 
   /* Data entry */
   .field-group { margin-bottom: 14px; }
@@ -132,7 +137,7 @@
   .summary-table tr:nth-child(even) td { background: #f8fafc; }
 
   /* Misc */
-  .section-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; color: #1a6eb5; border-radius: 12px; padding: 8px 12px; }
+  .section-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; color: #1a6eb5; }
   .section-sub { font-size: 13px; color: #888; margin-bottom: 16px; }
   .count-badge { display: inline-block; background: #1a6eb5; color: white; border-radius: 20px; padding: 2px 10px; font-size: 13px; font-weight: bold; margin-left: 8px; }
   .add-row { display: flex; gap: 8px; margin-top: 8px; }
@@ -144,11 +149,11 @@
   .sort-hint { font-size: 12px; color: #aaa; text-align: center; padding: 2px 0 8px; }
 
   /* History */
-  .history-item { border-radius: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); overflow: hidden; }
+  .history-item { background: white; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); overflow: hidden; }
   .history-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer; }
   .history-date { font-size: 15px; font-weight: 700; color: #1a6eb5; }
   .history-staff { font-size: 13px; color: #888; margin-top: 2px; }
-  .history-body { overscroll-behavior-x: contain; padding: 10px 14px; border-top: 1px solid #f0f0f0; display: none; }
+  .history-body { overscroll-behavior-x: contain; padding: 10px 14px; background: #fafafa; border-top: 1px solid #f0f0f0; display: none; }
   .history-body.open { display: block; }
   .past-data-banner { background: #eff6ff; border: 1px solid #93c5fd; border-radius: 10px;
     padding: 12px; margin-top: 12px; display: none; }
@@ -158,16 +163,61 @@
   /* 誤操作防止: 旧ホーム/戻るボタンは非表示 */
   #backBtn,
   button[onclick*="index.html"] { display:none !important; }
-
+  /* === v2.2 style override === */
+  body,html,main,.screen,.screen.active,.panel,.card,.prop-card,section,
+  .container,.content,header,.header,.header-top,.header-left,
+  .nav-tabs,.nav-tab,.nav-tab.active,.nav-tab.disabled,
+  .back-btn,.section-title,.count-badge,
+  .staff-list,.staff-item,.staff-item.selected,
+  .day-save-single,.prop-card,.prop-card-header,.prop-card-body,
+  .prop-order-input,.day-dot,.day-dot.today,
+  .day-check-label,.day-check-label.checked,
+  .summary-table th,.history-item,.history-body,
+  .past-data-banner,.save-order-banner,
+  .btn,.btn-primary,.btn-secondary,.btn-success,.btn-warning,.btn-danger,.btn-enter,
+  .field-dropdown,.field-dropdown-item {
+    background: #fff !important;
+    background-color: #fff !important;
+    background-image: none !important;
+    color: #000 !important;
+  }
+  table,th,td,input,select,button,textarea,
+  .card,.prop-card,.staff-item,.day-save-single,
+  .nav-tab,.summary-table th,.history-item,
+  header,.header,.btn,.btn-enter {
+    border: 1px solid #000 !important;
+    border-color: #000 !important;
+  }
+  * { color: #000 !important; }
+  /* === v2.2 カード・設定画面 枠線＋文字色 補完 === */
+  .card, .card *, .screen-content, .section-sub,
+  .fields-label, .fields-group, .setting-section,
+  [style*='font-size'], [style*='font-weight'] {
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+  .card {
+    border: 1px solid #000 !important;
+  }
+  input[type=text], input[type=number], input[type=date],
+  select, textarea {
+    color: #000 !important;
+    background: #fff !important;
+    border: 1px solid #000 !important;
+  }
 </style>
 
 </head>
 <body>
 
-<div id="app-header">
-  <h1 id="headerTitle">計量データ入力</h1>
-</div>
-<div id="nav-tabs-bar">
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <button class="back-btn" id="backBtn" onclick="goBack()">← 戻る</button>
+      <span class="header-date" id="headerDateLabel"></span>
+    </div>
+    <span class="header-title" id="headerTitle">計量データ入力_3</span>
+  </div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="navDate" onclick="navTo(1)">📅 日付選択</button>
     <button class="nav-tab disabled" id="navStaff" onclick="navTo(2)">👤 担当者</button>
@@ -192,7 +242,7 @@
     </div>
     <div style="height:12px"></div>
     <button class="btn btn-primary" onclick="goToScreen2()">新規入力 →</button>
-    <div style="text-align:center;margin-top:20px;font-size:12px;color:#aaa">index_3-16.html</div>
+    <div style="text-align:center;margin-top:20px;font-size:12px;color:#aaa">index_3-15.html</div>
   </div>
 </div>
 
@@ -385,14 +435,14 @@ const DEFAULT_PROPERTIES = [
   { name:'いがっこ給食センター',       order:4,  days:[], fields:[{label:'可燃',unit:'kg'},{label:'不燃金属',unit:'kg'},{label:'ビン割れ物',unit:'kg'},{label:'硬質プラ',unit:'kg'}] },
   // ── すき家 ──
   { name:'すき家 伊賀上野店',             order:5,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'可燃',unit:'kg'},{label:'ビン缶PET',unit:'袋'},{label:'ビン缶PET',unit:'kg'}] },
-  // ── セブン 8店舗 ──
-  { name:'セブン伊賀四十九町北店',       order:6,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀緑ヶ丘東町店',   order:7,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀東条店',         order:8,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀平野北谷店',     order:9,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀緑ヶ丘本町店',         order:10, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀平野東町店',     order:11, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
-  { name:'セブン伊賀忍者市駅南店',         order:13, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  // ── セブンイレブン 8店舗 ──
+  { name:'セブンイレブン 伊賀四十九町北店',       order:6,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀緑ヶ丘東町店',   order:7,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀東条店',         order:8,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀平野北谷店',     order:9,  days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀緑ヶ丘本町店',         order:10, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀平野東町店',     order:11, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
+  { name:'セブンイレブン 伊賀忍者市駅南店',         order:13, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
   // ── セカンドストリート ──
   { name:'セカンドストリート 伊賀小田店',  order:14, days:[], fields:[{label:'可燃',unit:'袋'},{label:'不燃ビン缶PET',unit:'袋'},{label:'段ボール',unit:'kg'}] },
   // ── ナフコ ──
@@ -924,7 +974,7 @@ function savePropertyData(){
     let savedCard = null;
     cards.forEach(c=>{ if(c.dataset.propname===savedName) savedCard=c; });
     if(savedCard){
-      const headerH = (document.getElementById('app-header')?.offsetHeight || 0) + (document.getElementById('nav-tabs-bar')?.offsetHeight || 0);
+      const headerH = document.querySelector('.header').offsetHeight;
       const top = savedCard.getBoundingClientRect().top + window.scrollY - headerH - 8;
       window.scrollTo({ top, behavior:'instant' });
       const inp = savedCard.querySelector('.prop-order-input');
@@ -1538,7 +1588,7 @@ function movePropToPos(fromIdx, input){
   setTimeout(()=>{
     const cards = document.querySelectorAll('.prop-card');
     if(cards[toIdx]){
-      const headerH = (document.getElementById('app-header')?.offsetHeight || 0) + (document.getElementById('nav-tabs-bar')?.offsetHeight || 0);
+      const headerH = document.querySelector('.header').offsetHeight;
       const top = cards[toIdx].getBoundingClientRect().top + window.scrollY - headerH - 8;
       window.scrollTo({ top, behavior:'smooth' });
       cards[toIdx].style.background = '#d1fae5';
@@ -1629,20 +1679,7 @@ function sendHistoryByMail(ri, event){
   if(!to){ alert('送信先が設定されていません。\nメール設定タブでアドレスを登録してください。'); return; }
   const subject = encodeURIComponent(`計量データ ${record.date}（${record.staffName}）`);
   const bodyEncoded = encodeURIComponent(body);
-  openMailComposer(`mailto:${to}?subject=${subject}&body=${bodyEncoded}`);
-}
-
-function openMailComposer(mailtoUrl){
-  const a = document.createElement('a');
-  a.href = mailtoUrl;
-  a.target = '_top';
-  a.rel = 'noopener';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    if(a.parentNode) a.parentNode.removeChild(a);
-  }, 1000);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${bodyEncoded}`;
 }
 
 // ===== MAIL SETTINGS =====
@@ -1772,6 +1809,23 @@ function addNewProperty(){
 </script>
 <div id="drag-ghost"></div>
 <script src="app-tabs.js?v=20260518shadowlabel"></script>
-
+<script src="ueno-tabbar.js"></script>
+<style id=v22-body-override>
+  div.header,div.header *,.nav-tabs,.nav-tab,.nav-tab.active,.nav-tab.disabled,
+  .section-title,.count-badge,.past-data-banner,.save-order-banner,
+  .day-check-label,.day-check-label.checked,.day-dot,.day-dot.today,
+  .summary-table th,.history-body,.prop-card-body,
+  .btn,.btn-primary,.btn-secondary,.btn-success,.btn-warning,.btn-danger,.btn-enter,
+  .card,.prop-card,.staff-item,.staff-item.selected,.day-save-single {
+    background: #fff !important;
+    background-color: #fff !important;
+    background-image: none !important;
+    color: #000 !important;
+  }
+  div.header,div.header *,.nav-tabs,.nav-tab,.nav-tab.active {
+    border-color: #000 !important;
+  }
+  * { color: #000 !important; }
+</style>
 </body>
 </html>
